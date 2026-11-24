@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: saffronwok
+      POSTGRES_USER: saffronwok
+      POSTGRES_PASSWORD: ${SAFFRON_POSTGRES_PASSWORD:?Set SAFFRON_POSTGRES_PASSWORD for local development}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - verification-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "saffronwok"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+
+volumes:
+  verification-data:

@@ -1,0 +1,121 @@
+using System.Net;
+using System.Net.Http.Json;
+using Microsoft.Maui.Storage;
+using SaffronWok.Shared;
+
+namespace SaffronWok.Mobile;
+
+internal sealed class PhoneVerificationPage : ContentPage
+{
+    private readonly HttpClient api;
+    private readonly Entry phone = new() { Placeholder = "+1 404 555 0123", Keyboard = Keyboard.Telephone };
+    private readonly Entry code = new() { Placeholder = "Six-digit code", Keyboard = Keyboard.Numeric, MaxLength = 6, IsVisible = false };
+    private readonly Button request = new() { Text = "Request code" };
+    private readonly Button confirm = new() { Text = "Verify code", IsVisible = false };
+    private readonly Label status = new();
+    private Guid? challenge;
+
+    public PhoneVerificationPage(HttpClient api)
+    {
+        this.api = api;
+        Title = "Verify phone number";
+        request.Clicked += async (_, _) => await SubmitAsync(RequestCodeAsync);
+        confirm.Clicked += async (_, _) => await SubmitAsync(ConfirmCodeAsync);
+        phone.TextChanged += (_, _) =>
+        {
+            challenge = null;
+            code.Text = "";
+            code.IsVisible = false;
+            confirm.IsVisible = false;
+            request.Text = "Request code";
+            status.Text = "";
+        };
+        Content = new ScrollView
+        {
+            Content = new VerticalStackLayout
+            {
+                Padding = 24,
+                Spacing = 12,
+                Children =
+                {
+                    new Label { Text = "Enter your phone number with its country code.", FontSize = 20 },
+                    phone, request, code, confirm, status
+                }
+            }
+        };
+    }
+
+    private async Task SubmitAsync(Func<Task> submit)
+    {
+        phone.IsEnabled = request.IsEnabled = confirm.IsEnabled = false;
+        try
+        {
+            await submit();
+        }
+        catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException)
+        {
+            status.Text = "Couldn’t reach the verification service. Try again.";
+        }
+        finally
+        {
+            phone.IsEnabled = request.IsEnabled = confirm.IsEnabled = true;
+        }
+    }
+
+    private async Task RequestCodeAsync()
+    {
+        var enteredPhone = string.Concat((phone.Text ?? "").Where(character => !char.IsWhiteSpace(character)));
+        using var response = await api.PostAsJsonAsync("api/phone-verification/request",
+            new RequestPhoneCode(enteredPhone));
+        if (!response.IsSuccessStatusCode)
+        {
+            status.Text = response.StatusCode switch
+            {
+                HttpStatusCode.TooManyRequests => "Wait a minute before requesting another code.",
+                HttpStatusCode.BadRequest => "Enter a valid international phone number.",
+                _ => "Phone code delivery is currently unavailable."
+            };
+            return;
+        }
+
+        var result = await response.Content.ReadFromJsonAsync<PhoneCodeChallenge>();
+        if (result is null)
+            throw new HttpRequestException("Missing challenge.");
+
+        challenge = result.ChallengeId;
+        code.Text = "";
+        code.IsVisible = confirm.IsVisible = true;
+        request.Text = "Request a new code";
+        status.Text = "Enter your six-digit verification code.";
+    }
+
+    private async Task ConfirmCodeAsync()
+    {
+        if (challenge is not { } id)
+            return;
+
+        using var response = await api.PostAsJsonAsync("api/phone-verification/confirm",
+            new ConfirmPhoneCode(id, code.Text ?? ""));
+        if (!response.IsSuccessStatusCode)
+        {
+            status.Text = response.StatusCode switch
+            {
+                HttpStatusCode.TooManyRequests => "Too many requests. Try again in a minute.",
+                HttpStatusCode.BadRequest => "Code invalid or expired. Try again or request a new code.",
+                _ => "Verification is temporarily unavailable."
+            };
+            return;
+        }
+
+        var receipt = await response.Content.ReadFromJsonAsync<PhoneVerificationReceipt>();
+        if (receipt is null)
+            throw new HttpRequestException("Missing verification receipt.");
+
+        challenge = null;
+        code.Text = "";
+        code.IsVisible = confirm.IsVisible = false;
+        await SecureStorage.Default.SetAsync("phone-verification-receipt", receipt.Token);
+        request.Text = "Request code";
+        status.Text = "Phone number verified.";
+    }
+}
