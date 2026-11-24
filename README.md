@@ -38,3 +38,9 @@ From the app, request a code for the fictional number `+14045550123` and enter `
 The API stores a keyed hash of each generated code. Challenges expire after five minutes, allow five attempts, and are consumed on success. A successful confirmation issues a ten-minute verification receipt. Its hash is stored in PostgreSQL. Receipt exchange for a customer session will be part of the account integration.
 
 Development applies [the verification schema](src/SaffronWok.Api/Verification/schema.sql) at startup when configured. Apply that schema separately to production before enabling the verification endpoints. Production delivery requires an implementation of `IPhoneCodeSender`; the request endpoint returns HTTP 503 when delivery is unavailable. The mobile app currently uses local emulator API addresses. Use HTTPS for production verification traffic.
+
+## GitHub Actions
+
+The Build workflow compiles the API in Release and the Android and iOS Simulator apps in Debug. It runs on pushes to `main`, pull requests targeting `main`, and manual dispatch. The iOS job uses Xcode 26.5 and an ARM64 simulator target, with Apple code signing disabled.
+
+TestFlight or App Store distribution requires an Apple Developer Program team, a registered app ID for `com.saffronwok.mobile`, an Apple Distribution certificate with its private key, and an App Store provisioning profile. To automate upload, CI also needs an authorized App Store Connect API key. Add those credentials to a protected GitHub environment when setting up distribution.
