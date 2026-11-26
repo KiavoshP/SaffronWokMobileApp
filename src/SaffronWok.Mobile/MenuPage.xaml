@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SaffronWok.Mobile.MenuPage"
+             Title="Menu">
+    <Grid Padding="16" RowDefinitions="Auto,Auto,Auto,Auto,Auto,*" RowSpacing="12">
+        <Border Padding="12" Stroke="{StaticResource BorderSubtleBrush}"
+                StrokeShape="RoundRectangle 16" BackgroundColor="{StaticResource BgSurface}">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                    <Label x:Name="truckLabel" Text="PICKUP LOCATION" FontSize="10" FontFamily="InterBold"
+                           TextColor="{StaticResource TextMuted}" />
+                    <Label x:Name="locationLabel" Text="Choose a location" FontSize="13" FontFamily="InterBold"
+                           LineBreakMode="TailTruncation" />
+                </VerticalStackLayout>
+                <Button Grid.Column="1" Text="Switch" Clicked="LocationClicked" />
+            </Grid>
+        </Border>
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+            <VerticalStackLayout Spacing="4">
+                <Label Text="Live Menu" FontSize="24" FontFamily="InterExtraBold" SemanticProperties.HeadingLevel="Level1" />
+                <Label x:Name="summary" FontSize="12" TextColor="{StaticResource TextMuted}" />
+            </VerticalStackLayout>
+            <Border Grid.Column="1" VerticalOptions="Start" Padding="10,6"
+                    BackgroundColor="{StaticResource AccentAmberTint}" Stroke="{StaticResource BorderAmberBrush}"
+                    StrokeShape="RoundRectangle 999">
+                <Label Text="Pay at Pickup" FontSize="11" FontFamily="InterSemiBold" TextColor="{StaticResource AccentAmberSoft}" />
+            </Border>
+        </Grid>
+        <Border x:Name="venue" Grid.Row="2" IsVisible="False" Padding="12,8" StrokeShape="RoundRectangle 12"
+                BackgroundColor="{StaticResource AccentEmeraldTint}" Stroke="{StaticResource BorderEmeraldBrush}">
+            <Label x:Name="venueNote" FontSize="12" TextColor="{StaticResource AccentEmeraldSoft}" />
+        </Border>
+        <Label Grid.Row="3" Text="Mobile ordering coming soon. Order in person at the truck."
+               FontSize="12" TextColor="{StaticResource AccentAmberSoft}" />
+        <ScrollView Grid.Row="4" Orientation="Horizontal">
+            <HorizontalStackLayout x:Name="categoryFilters" Spacing="6" />
+        </ScrollView>
+        <RefreshView Grid.Row="5" x:Name="refresh" RefreshColor="{StaticResource AccentAmber}" Refreshing="RefreshMenu">
+            <CollectionView x:Name="items" SelectionMode="None" EmptyView="No dishes to display.">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="{OnIdiom Phone=2, Tablet=3, Desktop=3, Default=2}"
+                                     HorizontalItemSpacing="12" VerticalItemSpacing="12" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate xmlns:shared="clr-namespace:SaffronWok.Shared;assembly=SaffronWok.Shared" x:DataType="shared:MenuDish">
+                        <Border Padding="0" BackgroundColor="{StaticResource BgSurface}"
+                                Stroke="{StaticResource BorderSubtleBrush}" StrokeShape="RoundRectangle 16">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding SoldOut}" Value="True">
+                                    <Setter Property="Opacity" Value="0.6" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Grid RowDefinitions="46,Auto,Auto">
+                                <Grid Padding="8">
+                                    <Grid.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="{StaticResource AccentAmberTint}" Offset="0" />
+                                            <GradientStop Color="{StaticResource BgSurfaceElevated}" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Grid.Background>
+                                    <Border IsVisible="{Binding SoldOut}" HorizontalOptions="Start" VerticalOptions="Center"
+                                            BackgroundColor="{StaticResource AccentDangerBg}" Stroke="{StaticResource BorderDangerBrush}"
+                                            StrokeShape="RoundRectangle 999" Padding="6,3">
+                                        <Label Text="SOLD OUT TODAY" FontSize="9" FontFamily="InterBold"
+                                               TextColor="{StaticResource AccentDangerSoft}" />
+                                    </Border>
+                                </Grid>
+                                <Label Grid.Row="1" Margin="10,8" Text="{Binding Name}" FontSize="14" FontFamily="InterBold" />
+                                <Label Grid.Row="2" Margin="10,0,10,10" Text="{Binding Price, StringFormat='${0:F2}'}"
+                                       FontSize="14" FontFamily="InterBold" TextColor="{StaticResource AccentAmberBright}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

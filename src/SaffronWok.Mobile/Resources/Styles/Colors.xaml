@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <Color x:Key="BgCanvas">#09090B</Color>
+    <Color x:Key="BgSurface">#18181B</Color>
+    <Color x:Key="BgSurfaceElevated">#27272A</Color>
+    <Color x:Key="BorderSubtle">#27272A</Color>
+    <Color x:Key="BorderStrong">#3F3F46</Color>
+    <Color x:Key="BorderAmber">#66F59E0B</Color>
+    <Color x:Key="BorderEmerald">#6610B981</Color>
+    <Color x:Key="BorderDanger">#4DEF4444</Color>
+    <Color x:Key="AccentAmber">#F59E0B</Color>
+    <Color x:Key="AccentAmberBright">#FBBF24</Color>
+    <Color x:Key="AccentAmberSoft">#FCD34D</Color>
+    <Color x:Key="AccentAmberTint">#26F59E0B</Color>
+    <Color x:Key="AccentEmber">#EA580C</Color>
+    <Color x:Key="AccentEmerald">#10B981</Color>
+    <Color x:Key="AccentEmeraldSoft">#6EE7B7</Color>
+    <Color x:Key="AccentEmeraldTint">#2610B981</Color>
+    <Color x:Key="AccentDanger">#EF4444</Color>
+    <Color x:Key="AccentDangerSoft">#FCA5A5</Color>
+    <Color x:Key="AccentDangerBg">#450A0A</Color>
+    <Color x:Key="TextPrimary">#FFFFFF</Color>
+    <Color x:Key="TextSecondary">#D4D4D8</Color>
+    <Color x:Key="TextMuted">#A1A1AA</Color>
+    <Color x:Key="TextSubtle">#71717A</Color>
+    <Color x:Key="TextOnAccent">#09090B</Color>
+
+    <SolidColorBrush x:Key="BgCanvasBrush" Color="{StaticResource BgCanvas}" />
+    <SolidColorBrush x:Key="BgSurfaceBrush" Color="{StaticResource BgSurface}" />
+    <SolidColorBrush x:Key="BgSurfaceElevatedBrush" Color="{StaticResource BgSurfaceElevated}" />
+    <SolidColorBrush x:Key="BorderSubtleBrush" Color="{StaticResource BorderSubtle}" />
+    <SolidColorBrush x:Key="BorderStrongBrush" Color="{StaticResource BorderStrong}" />
+    <SolidColorBrush x:Key="BorderAmberBrush" Color="{StaticResource BorderAmber}" />
+    <SolidColorBrush x:Key="BorderEmeraldBrush" Color="{StaticResource BorderEmerald}" />
+    <SolidColorBrush x:Key="BorderDangerBrush" Color="{StaticResource BorderDanger}" />
+    <SolidColorBrush x:Key="AccentAmberBrush" Color="{StaticResource AccentAmber}" />
+    <SolidColorBrush x:Key="AccentAmberBrightBrush" Color="{StaticResource AccentAmberBright}" />
+    <SolidColorBrush x:Key="AccentAmberSoftBrush" Color="{StaticResource AccentAmberSoft}" />
+    <SolidColorBrush x:Key="AccentAmberTintBrush" Color="{StaticResource AccentAmberTint}" />
+    <SolidColorBrush x:Key="AccentEmberBrush" Color="{StaticResource AccentEmber}" />
+    <SolidColorBrush x:Key="AccentEmeraldBrush" Color="{StaticResource AccentEmerald}" />
+    <SolidColorBrush x:Key="AccentEmeraldSoftBrush" Color="{StaticResource AccentEmeraldSoft}" />
+    <SolidColorBrush x:Key="AccentEmeraldTintBrush" Color="{StaticResource AccentEmeraldTint}" />
+    <SolidColorBrush x:Key="AccentDangerBrush" Color="{StaticResource AccentDanger}" />
+    <SolidColorBrush x:Key="AccentDangerSoftBrush" Color="{StaticResource AccentDangerSoft}" />
+    <SolidColorBrush x:Key="AccentDangerBgBrush" Color="{StaticResource AccentDangerBg}" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimary}" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondary}" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMuted}" />
+    <SolidColorBrush x:Key="TextSubtleBrush" Color="{StaticResource TextSubtle}" />
+    <SolidColorBrush x:Key="TextOnAccentBrush" Color="{StaticResource TextOnAccent}" />
+</ResourceDictionary>

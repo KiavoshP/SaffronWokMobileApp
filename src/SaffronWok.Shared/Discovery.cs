@@ -4,7 +4,12 @@ public sealed record ServiceEvent(
     string Id, string Truck, string Name, string Address, string Hours,
     bool IsServing, double Latitude, double Longitude);
 
-public sealed record MenuDish(string Name, decimal Price, bool SoldOut = false);
+public sealed record MenuDish(string Name, decimal Price, bool SoldOut = false, string? Category = null);
+
+public sealed record DailySpecial(string EventId, string Title, string Badge, string Tagline, decimal Price);
+
+public sealed record DiscoveryBootstrap(IReadOnlyList<ServiceEvent> Events, EventMenu? Menu,
+    IReadOnlyList<DailySpecial> Specials);
 
 public sealed record EventMenu(string EventId, string? VenueNote, IReadOnlyList<MenuDish> Dishes);
 

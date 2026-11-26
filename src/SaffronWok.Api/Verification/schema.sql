@@ -28,3 +28,19 @@ CREATE TABLE IF NOT EXISTS phone_verification_sms_queue (
 
 CREATE INDEX IF NOT EXISTS ix_phone_verification_sms_queue_expiry
     ON phone_verification_sms_queue (expires_at);
+
+CREATE TABLE IF NOT EXISTS customers (
+    id uuid PRIMARY KEY,
+    full_name text NOT NULL,
+    phone text NOT NULL UNIQUE,
+    password_hash text NOT NULL,
+    is_local_test boolean NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS customer_sessions (
+    token_hash bytea PRIMARY KEY,
+    customer_id uuid NOT NULL REFERENCES customers (id) ON DELETE CASCADE,
+    expires_at timestamptz NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS ix_customer_sessions_expires_at ON customer_sessions (expires_at);

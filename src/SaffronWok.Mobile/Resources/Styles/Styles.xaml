@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <Style TargetType="ContentPage" ApplyToDerivedTypes="True">
+        <Setter Property="BackgroundColor" Value="{StaticResource BgCanvas}" />
+    </Style>
+    <Style TargetType="NavigationPage">
+        <Setter Property="BarBackgroundColor" Value="{StaticResource BgCanvas}" />
+        <Setter Property="BarTextColor" Value="{StaticResource TextPrimary}" />
+    </Style>
+    <Style TargetType="Label">
+        <Setter Property="FontFamily" Value="InterRegular" />
+        <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+    </Style>
+    <Style x:Key="SecondaryButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource BgSurfaceElevated}" />
+        <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+        <Setter Property="BorderColor" Value="{StaticResource BorderStrong}" />
+        <Setter Property="BorderWidth" Value="1" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="MinimumHeightRequest" Value="44" />
+        <Setter Property="FontFamily" Value="InterBold" />
+    </Style>
+    <Style TargetType="Button" BasedOn="{StaticResource SecondaryButton}" />
+    <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+        <Setter Property="BackgroundColor" Value="{StaticResource AccentAmber}" />
+        <Setter Property="BorderWidth" Value="0" />
+        <Setter Property="TextColor" Value="{StaticResource TextOnAccent}" />
+        <Style.Triggers>
+            <Trigger TargetType="Button" Property="IsEnabled" Value="False">
+                <Setter Property="BackgroundColor" Value="{StaticResource BgSurfaceElevated}" />
+                <Setter Property="TextColor" Value="{StaticResource TextMuted}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Entry">
+        <Setter Property="FontFamily" Value="InterRegular" />
+        <Setter Property="BackgroundColor" Value="{StaticResource BgCanvas}" />
+        <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource TextMuted}" />
+        <Setter Property="MinimumHeightRequest" Value="44" />
+    </Style>
+    <Style TargetType="ScrollView">
+        <Setter Property="HorizontalScrollBarVisibility" Value="Never" />
+        <Setter Property="VerticalScrollBarVisibility" Value="Never" />
+    </Style>
+    <Style TargetType="CollectionView">
+        <Setter Property="HorizontalScrollBarVisibility" Value="Never" />
+        <Setter Property="VerticalScrollBarVisibility" Value="Never" />
+    </Style>
+</ResourceDictionary>

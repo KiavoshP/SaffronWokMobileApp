@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:SaffronWok.Mobile.Controls"
+             x:Class="SaffronWok.Mobile.SplashPage">
+    <Grid x:Name="root">
+        <Grid.Background>
+            <RadialGradientBrush Center="0.5,0.45" Radius="0.75">
+                <GradientStop Color="#47F59E0B" Offset="0" />
+                <GradientStop Color="#387C2D12" Offset="0.38" />
+                <GradientStop Color="{StaticResource BgCanvas}" Offset="0.82" />
+            </RadialGradientBrush>
+        </Grid.Background>
+        <VerticalStackLayout Padding="16" VerticalOptions="Center" HorizontalOptions="Center" Spacing="12">
+            <Grid HeightRequest="108" WidthRequest="108" HorizontalOptions="Center">
+                <Ellipse x:Name="glow" Fill="{StaticResource AccentAmberTintBrush}" />
+                <controls:SaffronLogoView x:Name="emblem" Size="76" HasGlow="True"
+                                          VerticalOptions="Center" HorizontalOptions="Center" />
+            </Grid>
+            <Label FontSize="30" FontFamily="InterExtraBold" HorizontalTextAlignment="Center"
+                   SemanticProperties.HeadingLevel="Level1">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Saffron" TextColor="{StaticResource TextPrimary}" />
+                        <Span Text="Wok" TextColor="{StaticResource AccentAmberBright}" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+            <Label Text="PERSIAN × VIETNAMESE CHARCOAL GRILL" FontSize="11" FontFamily="InterBold"
+                   CharacterSpacing="1.6" HorizontalTextAlignment="Center" TextColor="{StaticResource AccentAmberSoft}" />
+            <ProgressBar x:Name="progress" Margin="0,24,0,0" WidthRequest="240"
+                         HorizontalOptions="Center" ProgressColor="{StaticResource AccentAmber}" />
+            <Label Text="Warming up the charcoal &amp; fetching live menu..." FontSize="11"
+                   HorizontalTextAlignment="Center" TextColor="{StaticResource TextMuted}" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

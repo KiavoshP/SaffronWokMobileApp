@@ -5,49 +5,35 @@ using SaffronWok.Shared;
 
 namespace SaffronWok.Mobile;
 
-internal sealed class PhoneVerificationPage : ContentPage
+public sealed partial class PhoneVerificationPage : ContentPage
 {
     private readonly HttpClient api;
-    private readonly Entry phone = new() { Placeholder = "+1 404 555 0123", Keyboard = Keyboard.Telephone };
-    private readonly Entry code = new() { Placeholder = "Six-digit code", Keyboard = Keyboard.Numeric, MaxLength = 6, IsVisible = false };
-    private readonly Button request = new() { Text = "Request code" };
-    private readonly Button confirm = new() { Text = "Verify code", IsVisible = false };
-    private readonly Label status = new();
+    private readonly Action<PhoneVerificationReceipt>? verified;
     private Guid? challenge;
 
-    public PhoneVerificationPage(HttpClient api)
+    public PhoneVerificationPage(HttpClient api, Action<PhoneVerificationReceipt>? verified = null)
     {
         this.api = api;
-        Title = "Verify phone number";
+        this.verified = verified;
+        InitializeComponent();
+        cancel.IsVisible = verified is not null;
         request.Clicked += async (_, _) => await SubmitAsync(RequestCodeAsync);
         confirm.Clicked += async (_, _) => await SubmitAsync(ConfirmCodeAsync);
         phone.TextChanged += (_, _) =>
         {
             challenge = null;
             code.Text = "";
-            code.IsVisible = false;
-            confirm.IsVisible = false;
+            codeFields.IsVisible = false;
             request.Text = "Request code";
             status.Text = "";
         };
-        Content = new ScrollView
-        {
-            Content = new VerticalStackLayout
-            {
-                Padding = 24,
-                Spacing = 12,
-                Children =
-                {
-                    new Label { Text = "Enter your phone number with its country code.", FontSize = 20 },
-                    phone, request, code, confirm, status
-                }
-            }
-        };
     }
+
+    private async void CancelClicked(object? sender, EventArgs args) => await Navigation.PopModalAsync();
 
     private async Task SubmitAsync(Func<Task> submit)
     {
-        phone.IsEnabled = request.IsEnabled = confirm.IsEnabled = false;
+        phone.IsEnabled = request.IsEnabled = confirm.IsEnabled = cancel.IsEnabled = false;
         try
         {
             await submit();
@@ -58,7 +44,7 @@ internal sealed class PhoneVerificationPage : ContentPage
         }
         finally
         {
-            phone.IsEnabled = request.IsEnabled = confirm.IsEnabled = true;
+            phone.IsEnabled = request.IsEnabled = confirm.IsEnabled = cancel.IsEnabled = true;
         }
     }
 
@@ -84,7 +70,7 @@ internal sealed class PhoneVerificationPage : ContentPage
 
         challenge = result.ChallengeId;
         code.Text = "";
-        code.IsVisible = confirm.IsVisible = true;
+        codeFields.IsVisible = true;
         request.Text = "Request a new code";
         status.Text = "Enter your six-digit verification code.";
     }
@@ -113,7 +99,14 @@ internal sealed class PhoneVerificationPage : ContentPage
 
         challenge = null;
         code.Text = "";
-        code.IsVisible = confirm.IsVisible = false;
+        codeFields.IsVisible = false;
+        if (verified is not null)
+        {
+            verified(receipt);
+            await Navigation.PopModalAsync();
+            return;
+        }
+
         await SecureStorage.Default.SetAsync("phone-verification-receipt", receipt.Token);
         request.Text = "Request code";
         status.Text = "Phone number verified.";

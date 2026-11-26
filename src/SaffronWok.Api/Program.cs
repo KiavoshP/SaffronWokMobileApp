@@ -1,5 +1,6 @@
 using System.Threading.RateLimiting;
 using Npgsql;
+using SaffronWok.Api.Accounts;
 using SaffronWok.Api.Verification;
 using SaffronWok.Shared;
 
@@ -36,6 +37,12 @@ app.MapGet("/health", () => Results.Ok());
 
 if (app.Environment.IsDevelopment())
 {
+    app.MapGet("/api/bootstrap", (string? eventId) =>
+    {
+        eventId ??= DevelopmentCatalog.Events.FirstOrDefault(item => item.IsServing)?.Id;
+        var menu = eventId is null ? null : DevelopmentCatalog.Menus.GetValueOrDefault(eventId);
+        return Results.Ok(new DiscoveryBootstrap(DevelopmentCatalog.Events, menu, DevelopmentCatalog.Specials));
+    });
     app.MapGet("/api/events", () => Results.Ok(DevelopmentCatalog.Events));
     app.MapGet("/api/events/{eventId}/menu", (string eventId) =>
         DevelopmentCatalog.Menus.TryGetValue(eventId, out var menu)
@@ -55,10 +62,12 @@ if (key is not null)
         await create.ExecuteNonQueryAsync();
     }
 
+    var allowLocalTest = app.Environment.IsDevelopment() &&
+        app.Configuration.GetValue<bool>("PhoneVerification:EnableLocalTestCode");
+    new CustomerEndpoints(database, allowLocalTest).Map(app);
     var smsQueue = workerToken is null ? null : new PhoneVerificationSmsQueue(database, key, workerToken);
     smsQueue?.Map(app);
-    var endpoints = new PhoneVerificationEndpoints(database, key, smsQueue,
-        app.Environment.IsDevelopment() && app.Configuration.GetValue<bool>("PhoneVerification:EnableLocalTestCode"));
+    var endpoints = new PhoneVerificationEndpoints(database, key, smsQueue, allowLocalTest);
     var verification = app.MapGroup("/api/phone-verification").RequireRateLimiting("phone-verification");
     verification.AddEndpointFilter(async (context, next) =>
     {

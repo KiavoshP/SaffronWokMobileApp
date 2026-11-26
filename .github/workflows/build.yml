@@ -45,7 +45,7 @@ jobs:
       - name: Build Android
         run: |
           dotnet build src/SaffronWok.Mobile --configuration Debug --framework net10.0-android \
-            -p:TargetFrameworks=net10.0-android
+            -p:SaffronWokMobileTargetFramework=net10.0-android
 
   ios:
     name: MAUI iOS Simulator
@@ -66,5 +66,5 @@ jobs:
       - name: Build without Apple signing
         run: |
           dotnet build src/SaffronWok.Mobile --configuration Debug --framework net10.0-ios \
-            -p:TargetFrameworks=net10.0-ios -p:RuntimeIdentifier=iossimulator-arm64 \
+            -p:SaffronWokMobileTargetFramework=net10.0-ios -p:RuntimeIdentifier=iossimulator-arm64 \
             -p:EnableCodeSigning=false

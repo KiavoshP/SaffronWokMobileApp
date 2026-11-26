@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SaffronWok.Mobile.Controls.SaffronLogoView"
+             x:Name="logo">
+    <Border WidthRequest="{Binding Size, Source={x:Reference logo}}"
+            HeightRequest="{Binding Size, Source={x:Reference logo}}"
+            StrokeShape="RoundRectangle 10" StrokeThickness="0">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="{StaticResource AccentAmberBright}" Offset="0" />
+                <GradientStop Color="#D97706" Offset="0.55" />
+                <GradientStop Color="#C2410C" Offset="1" />
+            </LinearGradientBrush>
+        </Border.Background>
+        <Border.Triggers>
+            <DataTrigger TargetType="Border" Binding="{Binding HasGlow, Source={x:Reference logo}}" Value="True">
+                <Setter Property="Shadow">
+                    <Shadow Brush="{StaticResource AccentAmberBrush}" Radius="28" Opacity="0.55" />
+                </Setter>
+            </DataTrigger>
+        </Border.Triggers>
+        <AbsoluteLayout InputTransparent="True">
+            <Path AbsoluteLayout.LayoutBounds="0.5,0.5,0.62,0.62"
+                  AbsoluteLayout.LayoutFlags="All"
+                  Fill="{StaticResource TextOnAccentBrush}"
+                  Aspect="Uniform"
+                  Data="M13,1 C14,6 21,8 21,15 C21,20 17,23 12,23 C7,23 3,20 3,15 C3,11 5,8 8,6 C8,10 9,11 10,12 C10,8 13,6 13,1 Z M12,14 C10,17 9,18 9,20 C9,22 15,22 15,20 C15,18 13,16 12,14 Z" />
+        </AbsoluteLayout>
+    </Border>
+</ContentView>

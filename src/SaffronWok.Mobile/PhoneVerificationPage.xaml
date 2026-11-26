@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:SaffronWok.Mobile.Controls"
+             x:Class="SaffronWok.Mobile.PhoneVerificationPage"
+             Title="Verify phone number">
+    <ScrollView>
+        <Grid Padding="16">
+            <Border BackgroundColor="{StaticResource BgSurface}"
+                    Stroke="{StaticResource BorderSubtleBrush}"
+                    StrokeShape="RoundRectangle 16"
+                    MaximumWidthRequest="380"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Start"
+                    Padding="20">
+                <VerticalStackLayout Spacing="12">
+                    <controls:SaffronLogoView Size="36" HorizontalOptions="Start" />
+                    <Label Text="Verify your phone" FontSize="20" FontFamily="InterExtraBold"
+                           SemanticProperties.HeadingLevel="Level1" />
+                    <Label Text="Enter your phone number with its country code."
+                           FontSize="13" TextColor="{StaticResource TextMuted}" />
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Phone number" FontFamily="InterBold" FontSize="12"
+                               TextColor="{StaticResource TextSecondary}" />
+                        <Border BackgroundColor="{StaticResource BgCanvas}"
+                                Stroke="{StaticResource BorderStrongBrush}" StrokeShape="RoundRectangle 12" Padding="10,0">
+                            <Entry x:Name="phone" Placeholder="+1 404 555 0123" Keyboard="Telephone"
+                                   SemanticProperties.Description="Phone number" />
+                        </Border>
+                    </VerticalStackLayout>
+                    <Button x:Name="request" Text="Request code" Style="{StaticResource PrimaryButton}" />
+                    <VerticalStackLayout x:Name="codeFields" IsVisible="False" Spacing="8">
+                        <Label Text="Verification code" FontFamily="InterBold" FontSize="12"
+                               TextColor="{StaticResource TextSecondary}" />
+                        <Border BackgroundColor="{StaticResource BgCanvas}"
+                                Stroke="{StaticResource BorderStrongBrush}" StrokeShape="RoundRectangle 12" Padding="10,0">
+                            <Entry x:Name="code" Placeholder="Six-digit code" Keyboard="Numeric" MaxLength="6"
+                                   SemanticProperties.Description="Six-digit verification code" />
+                        </Border>
+                        <Button x:Name="confirm" Text="Verify code" Style="{StaticResource PrimaryButton}" />
+                    </VerticalStackLayout>
+                    <Button x:Name="cancel" Text="Back to account" IsVisible="False" Clicked="CancelClicked" />
+                    <Label x:Name="status" FontSize="13" TextColor="{StaticResource TextMuted}" />
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+    </ScrollView>
+</ContentPage>

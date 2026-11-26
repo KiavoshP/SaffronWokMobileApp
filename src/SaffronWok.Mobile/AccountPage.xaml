@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:SaffronWok.Mobile.Controls"
+             x:Class="SaffronWok.Mobile.AccountPage"
+             Title="User">
+    <ScrollView>
+        <Grid Padding="16">
+            <Border Padding="20" MaximumWidthRequest="380" HorizontalOptions="Center"
+                    VerticalOptions="Start" StrokeShape="RoundRectangle 16"
+                    Stroke="{StaticResource BorderSubtleBrush}" BackgroundColor="{StaticResource BgSurface}">
+                <VerticalStackLayout Spacing="12">
+                    <controls:SaffronLogoView Size="36" HorizontalOptions="Start" />
+                    <Label x:Name="heading" Text="Customer Sign In" FontSize="22" FontFamily="InterExtraBold"
+                           SemanticProperties.HeadingLevel="Level1" />
+                    <VerticalStackLayout x:Name="credentials" Spacing="12">
+                        <Border x:Name="nameField" IsVisible="False" Padding="10,0" StrokeShape="RoundRectangle 12"
+                                Stroke="{StaticResource BorderStrongBrush}" BackgroundColor="{StaticResource BgCanvas}">
+                            <Entry x:Name="fullName" Placeholder="Full name" MaxLength="100"
+                                   SemanticProperties.Description="Full name" />
+                        </Border>
+                        <Border x:Name="phoneField" Padding="10,0" StrokeShape="RoundRectangle 12"
+                                Stroke="{StaticResource BorderStrongBrush}" BackgroundColor="{StaticResource BgCanvas}">
+                            <Entry x:Name="phoneNumber" Placeholder="+1 404 555 0123" Keyboard="Telephone"
+                                   SemanticProperties.Description="Phone number with country code" />
+                        </Border>
+                        <Border Padding="10,0" StrokeShape="RoundRectangle 12"
+                                Stroke="{StaticResource BorderStrongBrush}" BackgroundColor="{StaticResource BgCanvas}">
+                            <Entry x:Name="password" Placeholder="Password" IsPassword="True"
+                                   SemanticProperties.Description="Password" />
+                        </Border>
+                        <Button x:Name="verify" Text="Verify your phone number" IsVisible="False"
+                                Clicked="VerifyClicked" />
+                        <Button x:Name="submit" Text="Sign in" Style="{StaticResource PrimaryButton}"
+                                Clicked="SubmitClicked" />
+                        <Button x:Name="switchMode" Text="Create an account" Clicked="SwitchModeClicked" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout x:Name="profilePanel" IsVisible="False" Spacing="12">
+                        <Label x:Name="profilePhone" TextColor="{StaticResource TextMuted}" />
+                        <Label Text="Order history is coming soon." TextColor="{StaticResource TextMuted}" />
+                        <Button Text="Sign out" Clicked="SignOutClicked" />
+                    </VerticalStackLayout>
+                    <Label x:Name="accountStatus" TextColor="{StaticResource AccentDangerSoft}" />
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+    </ScrollView>
+</ContentPage>

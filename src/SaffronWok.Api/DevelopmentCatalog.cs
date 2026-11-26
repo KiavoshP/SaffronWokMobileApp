@@ -14,25 +14,37 @@ internal static class DevelopmentCatalog
 
     public static IReadOnlyDictionary<string, EventMenu> Menus { get; } = CreateMenus();
 
+    public static IReadOnlyList<DailySpecial> Specials { get; } =
+    [
+        new("smorgasburg", "Saffron Chicken Kebab", "CHEF’S PICK",
+            "Golden saffron chicken, grilled over charcoal.", 14.50m),
+        new("pontoon", "Lemongrass Beef Skewer", "FAN FAVORITE",
+            "Charcoal-seared beef with bright lemongrass.", 16.00m),
+        new("smorgasburg", "Zesty Jade Combo Plate", "LIMITED DROP",
+            "A generous plate with bright herbs and charcoal-fired flavor.", 19.50m),
+        new("pontoon", "Grilled Pork Skewer", "SMOKY CLASSIC",
+            "Juicy pork skewers with crisp, smoky edges.", 14.00m)
+    ];
+
     private static Dictionary<string, EventMenu> CreateMenus()
     {
         var menus = new Dictionary<string, EventMenu>
         {
             ["smorgasburg"] = new("smorgasburg", null,
             [
-                new("Saffron Chicken Kebab", 14.50m),
-                new("Lemongrass Beef Skewer", 16.00m),
-                new("Grilled Pork Skewer", 14.00m, SoldOut: true),
-                new("Zesty Jade Combo Plate", 19.50m),
-                new("Veggie & Torshi Plate", 12.50m),
-                new("SaffronWok Duo Platter", 22.00m)
+                new("Saffron Chicken Kebab", 14.50m, Category: "Skewers"),
+                new("Lemongrass Beef Skewer", 16.00m, Category: "Skewers"),
+                new("Grilled Pork Skewer", 14.00m, SoldOut: true, Category: "Skewers"),
+                new("Zesty Jade Combo Plate", 19.50m, Category: "Platters"),
+                new("Veggie & Torshi Plate", 12.50m, Category: "Vegetarian"),
+                new("SaffronWok Duo Platter", 22.00m, Category: "Platters")
             ]),
             ["pontoon"] = new("pontoon", "Drinks are served inside the Pontoon taproom.",
             [
-                new("Saffron Chicken Kebab", 14.50m),
-                new("Lemongrass Beef Skewer", 16.00m),
-                new("Grilled Pork Skewer", 14.00m),
-                new("Veggie & Torshi Plate", 12.50m)
+                new("Saffron Chicken Kebab", 14.50m, Category: "Skewers"),
+                new("Lemongrass Beef Skewer", 16.00m, Category: "Skewers"),
+                new("Grilled Pork Skewer", 14.00m, Category: "Skewers"),
+                new("Veggie & Torshi Plate", 12.50m, Category: "Vegetarian")
             ])
         };
         menus["fourth-ward"] = menus["pontoon"] with { EventId = "fourth-ward", VenueNote = null };

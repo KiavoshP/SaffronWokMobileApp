@@ -1,6 +1,6 @@
 # SaffronWok Mobile
 
-The first development slice shows sample live and upcoming events with venue-specific menus. With foreground location permission, the app suggests events within five miles, with live events first and nearest first within each group. Customers can always choose an event manually. Mobile ordering is marked coming soon.
+The development app includes Home, Menu, User, Rewards, and Locator screens. It shows sample live and upcoming events, daily specials, and venue-specific menus. With foreground location permission, the app suggests events within five miles, with live events first and nearest first within each group. Customers can always choose an event manually. Mobile ordering is marked coming soon.
 
 ## Run the development API
 
@@ -10,15 +10,15 @@ Use the .NET 10 SDK. From the repository root:
 ASPNETCORE_ENVIRONMENT=Development dotnet run --project src/SaffronWok.Api --no-launch-profile --urls http://localhost:5000
 ```
 
-The sample catalog is enabled only in Development. Use `GET /api/events` for the event list and `GET /api/events/smorgasburg/menu` or `GET /api/events/pontoon/menu` for a sample menu.
+The sample catalog is enabled only in Development. Use `GET /api/bootstrap` for the initial events, specials, and default menu. Use `GET /api/events` for the event list and `GET /api/events/smorgasburg/menu` or `GET /api/events/pontoon/menu` for a sample menu.
 
 ## Run the mobile app
 
-Install the .NET MAUI Android workload and Android SDK for Android development. For iOS and iPad, use a Mac with the iOS MAUI workload and compatible Xcode. In your IDE, run `src/SaffronWok.Mobile` on a simulator or emulator. The local API address is `http://10.0.2.2:5000` for Android Emulator and `http://localhost:5000` for iOS Simulator. The Android cleartext exception is scoped to the emulator's host alias. Physical-device testing needs a reachable HTTPS endpoint and an updated API address in `MauiProgram.cs`.
+Install the .NET MAUI Android workload and Android SDK for Android development. For iOS and iPad, use a Mac with the iOS MAUI workload and compatible Xcode. In your IDE, run `src/SaffronWok.Mobile` on a simulator or emulator. The local API address is `http://10.0.2.2:5000` for Android Emulator and `http://localhost:5000` for iOS Simulator. The Android cleartext exception is scoped to the emulator's host alias. Physical-device testing can use a reachable HTTPS endpoint and an updated API address in `MauiProgram.cs`. For an Android-only CLI build, pass `-f net10.0-android -p:SaffronWokMobileTargetFramework=net10.0-android`. This applies the framework selection to the Mobile project while restoring Shared for plain .NET.
 
 ## POS integration
 
-The SaffPOS integration branch is `deploy/ec2-package`, commit `129ef73`. Its order and catalog endpoints require staff authentication and its current catalog is global. The development catalog in this repository is illustrative. Publishing real event menus requires location-scoped data managed in SaffPOS. Customer order history and points require a verified customer identity and a customer-scoped SaffPOS read API.
+The SaffPOS integration branch is `deploy/ec2-package`, inspected at commit `7b4c025`. Its order and catalog endpoints require staff authentication and its current catalog is global. The development catalog in this repository is illustrative. Publishing real event menus requires location-scoped data managed in SaffPOS. SaffPOS owns order history, rewards balances, and redemptions. The mobile API manages customer identity and sessions. The deployed POS branch needs a customer-scoped integration for the mobile app to read orders and balances or request redemptions.
 
 ## Test phone verification locally
 
@@ -33,9 +33,9 @@ docker compose up -d --wait
 ASPNETCORE_ENVIRONMENT=Development dotnet run --project src/SaffronWok.Api --no-launch-profile --urls http://localhost:5000
 ```
 
-From the app, request a code for the fictional number `+14045550123` and enter `021819`. The local test code requires the explicit opt-in above, Development mode, a loopback connection, and a North American fictional number ending in 555-0100 through 555-0199. It still requires a current challenge, and the resulting test receipt is marked in the database.
+In the app, open **User → Create an account → Verify your phone number**. Request a code for the fictional number `+14045550123` and enter `021819`. Complete registration with a name and password. Use the same phone number and password to sign back in. The local test code requires the explicit opt-in above, Development mode, a loopback connection, and a North American fictional number ending in 555-0100 through 555-0199. It still requires a current challenge, and the resulting test receipt is marked in the database.
 
-The API stores a keyed hash of each generated code. Challenges expire after five minutes, allow five attempts, and are consumed on success. A successful confirmation issues a ten-minute verification receipt. Its hash is stored in PostgreSQL. Receipt exchange for a customer session will be part of the account integration.
+The API stores a keyed hash of each generated code. Challenges expire after five minutes, allow five attempts, and are consumed on success. A successful confirmation issues a ten-minute verification receipt. Its hash is stored in PostgreSQL. Registration consumes the receipt and issues a customer session. Passwords use BCrypt, sessions expire after one hour of inactivity, and local test receipts and accounts are rejected outside enabled Development.
 
 Development applies [the verification schema](src/SaffronWok.Api/Verification/schema.sql) at startup when configured. Apply that schema separately to production before enabling the verification endpoints. The request endpoint returns HTTP 503 when the SMS queue is disabled. A successful response means the message was queued. The mobile app currently uses local emulator API addresses. Use HTTPS for production verification traffic.
 
