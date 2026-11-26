@@ -16,3 +16,15 @@ CREATE TABLE IF NOT EXISTS phone_verification_receipts (
     expires_at timestamptz NOT NULL,
     consumed_at timestamptz
 );
+
+CREATE TABLE IF NOT EXISTS phone_verification_sms_queue (
+    id uuid PRIMARY KEY,
+    encrypted_text bytea NOT NULL,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    expires_at timestamptz NOT NULL,
+    lease_id uuid,
+    leased_until timestamptz
+);
+
+CREATE INDEX IF NOT EXISTS ix_phone_verification_sms_queue_expiry
+    ON phone_verification_sms_queue (expires_at);

@@ -7,14 +7,8 @@ using SaffronWok.Shared;
 
 namespace SaffronWok.Api.Verification;
 
-// The SIM-backed messaging service will implement this interface.
-internal interface IPhoneCodeSender
-{
-    Task SendAsync(string phone, string code, CancellationToken cancellationToken);
-}
-
 internal sealed partial class PhoneVerificationEndpoints(NpgsqlDataSource database, byte[] signingKey,
-    bool localTestEnabled)
+    PhoneVerificationSmsQueue? smsQueue, bool localTestEnabled)
 {
     private const string LocalTestCode = "021819";
 
@@ -29,8 +23,7 @@ internal sealed partial class PhoneVerificationEndpoints(NpgsqlDataSource databa
         }
 
         var localTest = AllowsLocalTest(context, phone);
-        var sender = context.RequestServices.GetService<IPhoneCodeSender>();
-        if (!localTest && sender is null)
+        if (!localTest && smsQueue is null)
         {
             await Results.StatusCode(503).ExecuteAsync(context);
             return;
@@ -38,30 +31,38 @@ internal sealed partial class PhoneVerificationEndpoints(NpgsqlDataSource databa
 
         var id = Guid.NewGuid();
         var code = GenerateCode();
+        var encryptedText = localTest ? null : smsQueue!.Encrypt(id,
+            $"Your SaffronWok verification code is {code}. It expires in 5 minutes.");
         await using var command = database.CreateCommand("""
-            INSERT INTO phone_verification_challenges
-                (id, phone, code_hash, is_local_test, expires_at, attempts_remaining)
-            VALUES (@id, @phone, @hash, @local_test, now() + interval '5 minutes', 5)
-            ON CONFLICT (phone) DO UPDATE
-            SET id = excluded.id, code_hash = excluded.code_hash, is_local_test = excluded.is_local_test,
-                issued_at = now(), expires_at = excluded.expires_at,
-                attempts_remaining = 5, consumed_at = NULL
-            WHERE phone_verification_challenges.issued_at <= now() - interval '1 minute'
+            WITH challenge AS (
+                INSERT INTO phone_verification_challenges
+                    (id, phone, code_hash, is_local_test, expires_at, attempts_remaining)
+                VALUES (@id, @phone, @hash, @local_test, now() + interval '5 minutes', 5)
+                ON CONFLICT (phone) DO UPDATE
+                SET id = excluded.id, code_hash = excluded.code_hash, is_local_test = excluded.is_local_test,
+                    issued_at = now(), expires_at = excluded.expires_at,
+                    attempts_remaining = 5, consumed_at = NULL
+                WHERE phone_verification_challenges.issued_at <= now() - interval '1 minute'
+                RETURNING id, expires_at
+            ), queued AS (
+                INSERT INTO phone_verification_sms_queue (id, encrypted_text, expires_at)
+                SELECT id, @text, expires_at FROM challenge WHERE @text IS NOT NULL
+            )
+            SELECT count(*) FROM challenge
             """);
         command.Parameters.AddWithValue("id", id);
         command.Parameters.AddWithValue("phone", phone);
         command.Parameters.AddWithValue("hash", HashCode(id, code));
         command.Parameters.AddWithValue("local_test", localTest);
+        command.Parameters.AddWithValue("text", NpgsqlTypes.NpgsqlDbType.Bytea,
+            (object?)encryptedText ?? DBNull.Value);
 
         var cancellation = context.RequestAborted;
-        if (await command.ExecuteNonQueryAsync(cancellation) == 0)
+        if ((long)(await command.ExecuteScalarAsync(cancellation))! == 0)
         {
             await Results.StatusCode(429).ExecuteAsync(context);
             return;
         }
-
-        if (!localTest)
-            await sender!.SendAsync(phone, code, cancellation);
 
         await Results.Ok(new PhoneCodeChallenge(id)).ExecuteAsync(context);
     }

@@ -37,10 +37,25 @@ From the app, request a code for the fictional number `+14045550123` and enter `
 
 The API stores a keyed hash of each generated code. Challenges expire after five minutes, allow five attempts, and are consumed on success. A successful confirmation issues a ten-minute verification receipt. Its hash is stored in PostgreSQL. Receipt exchange for a customer session will be part of the account integration.
 
-Development applies [the verification schema](src/SaffronWok.Api/Verification/schema.sql) at startup when configured. Apply that schema separately to production before enabling the verification endpoints. Production delivery requires an implementation of `IPhoneCodeSender`; the request endpoint returns HTTP 503 when delivery is unavailable. The mobile app currently uses local emulator API addresses. Use HTTPS for production verification traffic.
+Development applies [the verification schema](src/SaffronWok.Api/Verification/schema.sql) at startup when configured. Apply that schema separately to production before enabling the verification endpoints. The request endpoint returns HTTP 503 when the SMS queue is disabled. A successful response means the message was queued. The mobile app currently uses local emulator API addresses. Use HTTPS for production verification traffic.
 
 ## GitHub Actions
 
 The Build workflow compiles the API in Release and the Android and iOS Simulator apps in Debug. It runs on pushes to `main`, pull requests targeting `main`, and manual dispatch. The iOS job uses Xcode 26.5 and an ARM64 simulator target, with Apple code signing disabled.
 
 TestFlight or App Store distribution requires an Apple Developer Program team, a registered app ID for `com.saffronwok.mobile`, an Apple Distribution certificate with its private key, and an App Store provisioning profile. To automate upload, CI also needs an authorized App Store Connect API key. Add those credentials to a protected GitHub environment when setting up distribution.
+
+## Connect the SIM-based SMS worker
+
+Apply the updated [PostgreSQL schema](src/SaffronWok.Api/Verification/schema.sql). Set `SmsQueue__WorkerToken` on the API server to a random Base64 value generated with `openssl rand -base64 32`. Store the same token in the SIM worker's secret configuration. Both the verification database and its signing key are required. Keep the signing key stable while challenges and queued messages are active.
+
+The SIM worker makes outbound **HTTPS** requests to the API. Send `Authorization: Bearer <worker token>` on all queue calls.
+
+| Call | Response |
+| --- | --- |
+| `POST /api/sms-queue/claim-batch?limit=10` | `200` with an array of messages, oldest first. Each has `id`, `leaseId`, `phoneNumber`, `text`, `leaseExpiresAt`, and `expiresAt`. An empty queue returns `[]`. The limit defaults to 10 and can be 1–50. |
+| `POST /api/sms-queue/ack-batch` with JSON `[{"id":"<id>","leaseId":"<leaseId>"}]` | `200` with an array of `{"id":"<id>","acknowledged":true}` results in request order. A stale, expired, or already acknowledged lease returns `acknowledged: false` for that item. Send 1–50 distinct message IDs. |
+
+The single-message `POST /api/sms-queue/claim` and `POST /api/sms-queue/{id}/ack` endpoints also remain available.
+
+Poll in batches sized to the worker's available sending capacity. Acknowledge only the messages the SIM service accepted, and send acknowledgements before each lease expires. A lease lasts up to 30 seconds. Unacknowledged messages can be claimed again after their leases expire, until the verification code expires. Keep track of sent message IDs locally so a lost acknowledgement does not send the same SMS again. Only acknowledge a retry with its current lease ID. The API encrypts queued text at rest and skips superseded, consumed, or expired challenges. The Development test code does not queue an SMS.

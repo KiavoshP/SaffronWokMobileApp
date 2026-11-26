@@ -25,6 +25,10 @@ if (!string.IsNullOrWhiteSpace(connectionString))
     builder.Services.AddSingleton(_ => NpgsqlDataSource.Create(connectionString));
 }
 
+var workerToken = builder.Configuration["SmsQueue:WorkerToken"];
+if (workerToken is not null && (key is null || Convert.FromBase64String(workerToken).Length < 32))
+    throw new InvalidOperationException("SMS queue configuration requires the verification database and a Base64 worker token of at least 32 random bytes.");
+
 var app = builder.Build();
 app.UseRateLimiter();
 
@@ -51,7 +55,9 @@ if (key is not null)
         await create.ExecuteNonQueryAsync();
     }
 
-    var endpoints = new PhoneVerificationEndpoints(database, key,
+    var smsQueue = workerToken is null ? null : new PhoneVerificationSmsQueue(database, key, workerToken);
+    smsQueue?.Map(app);
+    var endpoints = new PhoneVerificationEndpoints(database, key, smsQueue,
         app.Environment.IsDevelopment() && app.Configuration.GetValue<bool>("PhoneVerification:EnableLocalTestCode"));
     var verification = app.MapGroup("/api/phone-verification").RequireRateLimiting("phone-verification");
     verification.AddEndpointFilter(async (context, next) =>
