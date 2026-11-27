@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="SaffronWok.Mobile.CartPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="My Cart">
+    <ScrollView HorizontalScrollBarVisibility="Never" VerticalScrollBarVisibility="Never">
+        <VerticalStackLayout Padding="16">
+                <!-- Empty State -->
+                <VerticalStackLayout
+                    Padding="24,48"
+                    Spacing="10"
+                    HorizontalOptions="Center">
+                    <Border
+                        WidthRequest="56"
+                        HeightRequest="56"
+                        StrokeShape="RoundRectangle 16"
+                        BackgroundColor="{StaticResource AccentAmberTint}"
+                        Stroke="{StaticResource BorderAmberBrush}"
+                        HorizontalOptions="Center">
+                        <Label Text="🛒" FontSize="26" HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Border>
+                    <Label Text="Your cart is empty" FontSize="16" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                    <Label
+                        Text="Mobile ordering is coming soon. Order in person at the truck."
+                        Style="{StaticResource MutedCaptionLabel}"
+                        HorizontalTextAlignment="Center"
+                        MaximumWidthRequest="260" />
+                    <Button
+                        Text="Browse Live Menu"
+                        Style="{StaticResource PrimaryButton}"
+                        Clicked="BrowseClicked"
+                        Margin="0,8,0,0"
+                        HorizontalOptions="Center" />
+                </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

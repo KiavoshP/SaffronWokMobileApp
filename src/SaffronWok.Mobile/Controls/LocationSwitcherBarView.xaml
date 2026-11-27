@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="SaffronWok.Mobile.Controls.LocationSwitcherBarView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Name="root">
+
+
+    <Border
+        BackgroundColor="{StaticResource BgSurface}"
+        Stroke="{StaticResource BorderSubtleBrush}"
+        StrokeThickness="1"
+        StrokeShape="RoundRectangle 16"
+        Padding="12">
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+            <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                    <BoxView
+                        WidthRequest="8"
+                        HeightRequest="8"
+                        CornerRadius="4"
+                        VerticalOptions="Center"
+                        x:Name="truckDot" Color="{StaticResource AccentAmber}" />
+                    <Label
+                        x:Name="truckName" Text="PICKUP LOCATION"
+                        FontSize="10"
+                        FontAttributes="Bold"
+                        TextTransform="Uppercase"
+                        TextColor="{StaticResource TextMuted}"
+                        VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
+                <Label
+                    x:Name="venue" Text="Choose a location"
+                    FontSize="13"
+                    FontAttributes="Bold"
+                    TextColor="{StaticResource TextPrimary}"
+                    LineBreakMode="TailTruncation" />
+            </VerticalStackLayout>
+
+            <Border
+                Grid.Column="1"
+                BackgroundColor="{StaticResource BgSurfaceElevated}"
+                Stroke="{StaticResource BorderStrongBrush}"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 12"
+                Padding="10,7"
+                VerticalOptions="Center">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="SwitchTapped" />
+                </Border.GestureRecognizers>
+                <Label
+                    Text="⇄ Switch"
+                    FontSize="11"
+                    FontAttributes="Bold"
+                    TextColor="{StaticResource AccentAmberSoft}"
+                    VerticalOptions="Center" />
+            </Border>
+        </Grid>
+    </Border>
+</ContentView>

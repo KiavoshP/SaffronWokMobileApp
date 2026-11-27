@@ -14,7 +14,7 @@ The sample catalog is enabled only in Development. Use `GET /api/bootstrap` for 
 
 ## Run the mobile app
 
-Install the .NET MAUI Android workload and Android SDK for Android development. For iOS and iPad, use a Mac with the iOS MAUI workload and compatible Xcode. In your IDE, run `src/SaffronWok.Mobile` on a simulator or emulator. The local API address is `http://10.0.2.2:5000` for Android Emulator and `http://localhost:5000` for iOS Simulator. The Android cleartext exception is scoped to the emulator's host alias. Physical-device testing can use a reachable HTTPS endpoint and an updated API address in `MauiProgram.cs`. For an Android-only CLI build, pass `-f net10.0-android -p:SaffronWokMobileTargetFramework=net10.0-android`. This applies the framework selection to the Mobile project while restoring Shared for plain .NET.
+Install the .NET MAUI Android workload and Android SDK for Android development. For iOS and iPad, use a Mac with the iOS MAUI workload and compatible Xcode. In your IDE, run `src/SaffronWok.Mobile` on a simulator or emulator. The local API address is `http://10.0.2.2:5000` for Android Emulator and `http://localhost:5000` for iOS Simulator. On a physical Android device, the app uses `http://127.0.0.1:5000`. Connect over USB and run `adb reverse tcp:5000 tcp:5000` while the API is running on the host. Android's cleartext exceptions are limited to the emulator host alias and the device loopback address. For an Android-only CLI build, pass `-f net10.0-android -p:SaffronWokMobileTargetFramework=net10.0-android`. This applies the framework selection to the Mobile project while restoring Shared for plain .NET.
 
 ## POS integration
 

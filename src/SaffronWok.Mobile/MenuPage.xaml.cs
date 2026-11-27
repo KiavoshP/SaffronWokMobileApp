@@ -41,8 +41,7 @@ public sealed partial class MenuPage : ContentPage
         if (selected?.Id != serviceEvent.Id)
             category = null;
         selected = serviceEvent;
-        truckLabel.Text = $"MENU FOR {serviceEvent.Truck.ToUpperInvariant()}";
-        locationLabel.Text = serviceEvent.Name;
+        locationSwitcher.ShowLocation(serviceEvent);
         summary.Text = "Loading menu…";
         items.ItemsSource = null;
         categoryFilters.Children.Clear();

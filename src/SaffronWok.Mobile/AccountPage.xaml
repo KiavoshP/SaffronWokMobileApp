@@ -10,9 +10,11 @@
                     VerticalOptions="Start" StrokeShape="RoundRectangle 16"
                     Stroke="{StaticResource BorderSubtleBrush}" BackgroundColor="{StaticResource BgSurface}">
                 <VerticalStackLayout Spacing="12">
-                    <controls:SaffronLogoView Size="36" HorizontalOptions="Start" />
-                    <Label x:Name="heading" Text="Customer Sign In" FontSize="22" FontFamily="InterExtraBold"
-                           SemanticProperties.HeadingLevel="Level1" />
+                    <HorizontalStackLayout Spacing="12">
+                        <controls:SaffronLogoView Size="38" VerticalOptions="Center" />
+                        <Label x:Name="heading" Text="Customer Sign In" FontSize="18" FontFamily="InterExtraBold"
+                               VerticalOptions="Center" SemanticProperties.HeadingLevel="Level1" />
+                    </HorizontalStackLayout>
                     <VerticalStackLayout x:Name="credentials" Spacing="12">
                         <Border x:Name="nameField" IsVisible="False" Padding="10,0" StrokeShape="RoundRectangle 12"
                                 Stroke="{StaticResource BorderStrongBrush}" BackgroundColor="{StaticResource BgCanvas}">
@@ -40,7 +42,10 @@
                         <Label Text="Order history is coming soon." TextColor="{StaticResource TextMuted}" />
                         <Button Text="Sign out" Clicked="SignOutClicked" />
                     </VerticalStackLayout>
-                    <Label x:Name="accountStatus" TextColor="{StaticResource AccentDangerSoft}" />
+                    <Border x:Name="accountError" IsVisible="False" BackgroundColor="#26EF4444"
+                            Stroke="{StaticResource BorderDangerBrush}" StrokeShape="RoundRectangle 12" Padding="10">
+                        <Label x:Name="accountStatus" TextColor="{StaticResource AccentDangerSoft}" />
+                    </Border>
                 </VerticalStackLayout>
             </Border>
         </Grid>

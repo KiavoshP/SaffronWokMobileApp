@@ -50,4 +50,28 @@
     <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMuted}" />
     <SolidColorBrush x:Key="TextSubtleBrush" Color="{StaticResource TextSubtle}" />
     <SolidColorBrush x:Key="TextOnAccentBrush" Color="{StaticResource TextOnAccent}" />
+    <!-- Reusable Brushes -->
+    <LinearGradientBrush x:Key="LogoGradientBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FBBF24" Offset="0.0" />
+        <GradientStop Color="#D97706" Offset="0.55" />
+        <GradientStop Color="#C2410C" Offset="1.0" />
+    </LinearGradientBrush>
+
+    <RadialGradientBrush x:Key="SplashBackgroundBrush" Center="0.5,0.45" Radius="0.75">
+        <GradientStop Color="#47F59E0B" Offset="0.0" />
+        <GradientStop Color="#387C2D12" Offset="0.38" />
+        <GradientStop Color="#09090B" Offset="0.82" />
+    </RadialGradientBrush>
+
+    <RadialGradientBrush x:Key="HomeBackgroundBrush" Center="1.0,0.0" Radius="0.9">
+        <GradientStop Color="#47D97706" Offset="0.0" />
+        <GradientStop Color="#F518181B" Offset="0.48" />
+        <GradientStop Color="#09090B" Offset="1.0" />
+    </RadialGradientBrush>
+
+    <LinearGradientBrush x:Key="EmberClubCardBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#F59E0B" Offset="0.0" />
+        <GradientStop Color="#EA580C" Offset="0.5" />
+        <GradientStop Color="#18181B" Offset="1.0" />
+    </LinearGradientBrush>
 </ResourceDictionary>

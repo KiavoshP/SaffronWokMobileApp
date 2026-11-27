@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SaffronWok.Mobile.EventPage">
+             x:Class="SaffronWok.Mobile.EventPage" Title="Locator">
     <Grid>
         <Grid.Background>
             <RadialGradientBrush Center="1,0" Radius="0.9">
@@ -12,9 +12,9 @@
         </Grid.Background>
         <ScrollView>
             <VerticalStackLayout Padding="16" Spacing="16">
-                <Label x:Name="eyebrow" Text="LIVE CHARCOAL KITCHEN" TextColor="{StaticResource AccentAmberSoft}"
+                <Label x:Name="eyebrow" Text="LIVE &amp; UPCOMING SCHEDULE" TextColor="{StaticResource AccentAmberSoft}"
                        FontSize="11" FontFamily="InterSemiBold" CharacterSpacing="0.8" />
-                <Label x:Name="headline" Text="Fire-Grilled Flavor Awaits" FontSize="26" FontFamily="InterExtraBold"
+                <Label x:Name="headline" Text="Food Truck Locator" FontSize="26" FontFamily="InterExtraBold"
                        SemanticProperties.HeadingLevel="Level1" />
                 <Label x:Name="serviceCount" TextColor="{StaticResource AccentEmeraldSoft}" FontFamily="InterBold" />
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
@@ -22,42 +22,6 @@
                     <Button Grid.Column="1" Text="Refresh events" Clicked="RefreshClicked" />
                 </Grid>
                 <Label x:Name="status" TextColor="{StaticResource TextMuted}" IsVisible="False" />
-                <VerticalStackLayout x:Name="specialsSection" IsVisible="False" Spacing="10">
-                    <Label Text="TODAY’S FIRE &amp; DAILY SPECIALS" FontSize="12" FontFamily="InterBold"
-                           TextColor="{StaticResource AccentAmberSoft}" />
-                    <CarouselView x:Name="specials" HeightRequest="232" Loop="True"
-                                  HorizontalScrollBarVisibility="Never" VerticalScrollBarVisibility="Never"
-                                  IndicatorView="specialIndicators">
-                        <CarouselView.ItemTemplate>
-                            <DataTemplate xmlns:shared="clr-namespace:SaffronWok.Shared;assembly=SaffronWok.Shared" x:DataType="shared:DailySpecial">
-                                <Border Padding="16" Stroke="{StaticResource BorderAmberBrush}" StrokeShape="RoundRectangle 24">
-                                    <Border.Background>
-                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                            <GradientStop Color="#7C2D12" Offset="0" />
-                                            <GradientStop Color="{StaticResource BgSurface}" Offset="1" />
-                                        </LinearGradientBrush>
-                                    </Border.Background>
-                                    <Grid RowDefinitions="Auto,*,Auto" RowSpacing="10">
-                                        <Label Text="{Binding Badge}" FontSize="11" FontFamily="InterSemiBold"
-                                               TextColor="{StaticResource AccentAmberSoft}" />
-                                        <VerticalStackLayout Grid.Row="1" Spacing="6" VerticalOptions="Center">
-                                            <Label Text="{Binding Title}" FontSize="23" FontFamily="InterExtraBold" MaxLines="2" />
-                                            <Label Text="{Binding Tagline}" FontSize="12" MaxLines="2" />
-                                        </VerticalStackLayout>
-                                        <Grid Grid.Row="2" ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                                            <Label Text="{Binding Price, StringFormat='Starting at ${0:F2}'}"
-                                                   VerticalOptions="Center" FontFamily="InterBold" />
-                                            <Button Grid.Column="1" Text="View menu" Style="{StaticResource PrimaryButton}"
-                                                    CommandParameter="{Binding .}" Clicked="SpecialClicked" />
-                                        </Grid>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </CarouselView.ItemTemplate>
-                    </CarouselView>
-                    <IndicatorView x:Name="specialIndicators" IndicatorSize="6" HorizontalOptions="Center"
-                                   IndicatorColor="{StaticResource BorderStrong}" SelectedIndicatorColor="{StaticResource AccentAmberBright}" />
-                </VerticalStackLayout>
                 <HorizontalStackLayout x:Name="truckFilters" IsVisible="False" Spacing="6" />
                 <Border x:Name="mapCard" IsVisible="False" Stroke="{StaticResource BorderStrongBrush}"
                         BackgroundColor="{StaticResource BgSurface}" StrokeShape="RoundRectangle 24"
@@ -82,7 +46,6 @@
                 </Border>
                 <VerticalStackLayout x:Name="selectedEventPanel" />
                 <VerticalStackLayout x:Name="eventsPanel" Spacing="12" />
-                <Button x:Name="locatorLink" Text="Open Truck Locator" Clicked="LocatorClicked" />
             </VerticalStackLayout>
         </ScrollView>
     </Grid>

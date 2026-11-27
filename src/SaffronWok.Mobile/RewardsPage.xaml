@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="SaffronWok.Mobile.RewardsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Rewards">
+
+    <ScrollView HorizontalScrollBarVisibility="Never" VerticalScrollBarVisibility="Never">
+        <VerticalStackLayout Padding="16" Spacing="20">
+
+            <VerticalStackLayout Spacing="2">
+                <Label Text="SaffronWok Rewards" Style="{StaticResource PageTitleLabel}" />
+            </VerticalStackLayout>
+
+            <!-- Ember Club Loyalty Banner -->
+            <Border
+                Stroke="{StaticResource BorderAmberBrush}"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 24"
+                Padding="20"
+                Background="{StaticResource EmberClubCardBrush}">
+                <VerticalStackLayout Spacing="16">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="🔥 EMBER CLUB" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                    </Grid>
+                    <Label Text="Loyalty balances and redemptions are coming soon."
+                           TextColor="{StaticResource TextPrimary}" />
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

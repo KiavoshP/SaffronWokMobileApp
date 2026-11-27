@@ -1,21 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:SaffronWok.Mobile.Controls"
              x:Class="SaffronWok.Mobile.MenuPage"
              Title="Menu">
     <Grid Padding="16" RowDefinitions="Auto,Auto,Auto,Auto,Auto,*" RowSpacing="12">
-        <Border Padding="12" Stroke="{StaticResource BorderSubtleBrush}"
-                StrokeShape="RoundRectangle 16" BackgroundColor="{StaticResource BgSurface}">
-            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
-                <VerticalStackLayout Spacing="2" VerticalOptions="Center">
-                    <Label x:Name="truckLabel" Text="PICKUP LOCATION" FontSize="10" FontFamily="InterBold"
-                           TextColor="{StaticResource TextMuted}" />
-                    <Label x:Name="locationLabel" Text="Choose a location" FontSize="13" FontFamily="InterBold"
-                           LineBreakMode="TailTruncation" />
-                </VerticalStackLayout>
-                <Button Grid.Column="1" Text="Switch" Clicked="LocationClicked" />
-            </Grid>
-        </Border>
+        <controls:LocationSwitcherBarView x:Name="locationSwitcher" SwitchRequested="LocationClicked" />
         <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="8">
             <VerticalStackLayout Spacing="4">
                 <Label Text="Live Menu" FontSize="24" FontFamily="InterExtraBold" SemanticProperties.HeadingLevel="Level1" />

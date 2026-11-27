@@ -19,6 +19,11 @@ public sealed partial class AccountPage : ContentPage
     {
         this.api = api;
         InitializeComponent();
+        accountStatus.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == Label.TextProperty.PropertyName)
+                accountError.IsVisible = !string.IsNullOrWhiteSpace(accountStatus.Text);
+        };
     }
 
     protected override async void OnAppearing()

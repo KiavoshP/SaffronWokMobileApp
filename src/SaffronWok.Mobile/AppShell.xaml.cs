@@ -9,6 +9,7 @@ public sealed partial class AppShell : Shell
     private readonly Tab menuTab;
     private readonly Tab locatorTab;
     private readonly MenuPage menu;
+    private readonly EventPage locator;
     private readonly Tab homeTab;
     private readonly ShellItem navigation;
     private readonly bool useRail;
@@ -25,11 +26,12 @@ public sealed partial class AppShell : Shell
         FlyoutBehavior = useRail ? FlyoutBehavior.Locked : FlyoutBehavior.Disabled;
 
         menu = new MenuPage(catalog);
-        homeTab = AddTab("Home", "home", new EventPage(catalog, OpenMenuAsync, ShowLocator, isHome: true));
+        locator = new EventPage(catalog, OpenMenuAsync);
+        homeTab = AddTab("Home", "home", new HomePage(catalog, OpenMenuAsync, ShowLocator));
         menuTab = AddTab("Menu", "menu", menu);
         AddTab("User", "user", new AccountPage(catalog.Api));
-        AddTab("Rewards", "rewards", RewardsPage());
-        locatorTab = AddTab("Locator", "locator", new EventPage(catalog, OpenMenuAsync, ShowLocator, isHome: false));
+        AddTab("Rewards", "rewards", new RewardsPage());
+        locatorTab = AddTab("Locator", "locator", locator);
         Items.Add(navigation);
     }
 
@@ -50,7 +52,37 @@ public sealed partial class AppShell : Shell
         var home = new TapGestureRecognizer();
         home.Tapped += (_, _) => navigation.CurrentItem = homeTab;
         bar.GestureRecognizers.Add(home);
-        Shell.SetTitleView(page, bar);
+        var header = new Grid
+        {
+            ColumnDefinitions =
+            {
+                new ColumnDefinition(GridLength.Star),
+                new ColumnDefinition(GridLength.Auto)
+            },
+            ColumnSpacing = 12
+        };
+        var cart = new Button
+        {
+            Text = "Cart",
+            FontSize = 12,
+            VerticalOptions = LayoutOptions.Center
+        };
+        cart.Clicked += async (_, _) =>
+        {
+            cart.IsEnabled = false;
+            try
+            {
+                await page.Navigation.PushAsync(new CartPage(() => navigation.CurrentItem = menuTab));
+            }
+            finally
+            {
+                cart.IsEnabled = true;
+            }
+        };
+        Grid.SetColumn(cart, 1);
+        header.Children.Add(bar);
+        header.Children.Add(cart);
+        Shell.SetTitleView(page, header);
         Shell.SetTabBarIsVisible(page, !useRail);
 
         var tab = new Tab { Title = title, Route = route, Icon = "nav_" + route + ".png" };
@@ -65,47 +97,13 @@ public sealed partial class AppShell : Shell
         await menu.SelectAsync(serviceEvent);
     }
 
-    private void ShowLocator() => navigation.CurrentItem = locatorTab;
+    private void ShowLocator(ServiceEvent? serviceEvent)
+    {
+        if (serviceEvent is not null)
+            locator.FocusEvent(serviceEvent);
+
+        navigation.CurrentItem = locatorTab;
+    }
 
     internal static Color ThemeColor(string key) => (Color)Application.Current!.Resources[key];
-
-    private static ContentPage RewardsPage() => new()
-    {
-        Title = "Rewards",
-        Content = new ScrollView
-        {
-            Content = new VerticalStackLayout
-            {
-                Padding = 16,
-                Spacing = 16,
-                Children =
-                {
-                    new Label { Text = "SaffronWok Rewards", FontSize = 24, FontAttributes = FontAttributes.Bold },
-                    new Border
-                    {
-                        Padding = 20,
-                        Stroke = new SolidColorBrush(ThemeColor("BorderAmber")),
-                        StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 24 },
-                        Background = new LinearGradientBrush(
-                            new GradientStopCollection
-                            {
-                                new(ThemeColor("AccentAmber"), 0),
-                                new(ThemeColor("AccentEmber"), 0.5f),
-                                new(ThemeColor("BgSurface"), 1)
-                            }, new Point(0, 0), new Point(1, 1)),
-                        Content = new VerticalStackLayout
-                        {
-                            Spacing = 8,
-                            Children =
-                            {
-                                new SaffronLogoView { HorizontalOptions = LayoutOptions.Start },
-                                new Label { Text = "EMBER CLUB", FontSize = 18, FontAttributes = FontAttributes.Bold },
-                                new Label { Text = "Loyalty balances and redemptions are coming soon." }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    };
 }

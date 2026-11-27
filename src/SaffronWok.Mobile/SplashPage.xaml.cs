@@ -39,8 +39,17 @@ public sealed partial class SplashPage : ContentPage
     }
 
     private Task AnimateAsync() => Task.WhenAll(
-        progress.ProgressTo(1, 2200, Easing.CubicOut),
+        AnimateProgressAsync(),
         PulseAsync());
+
+    private Task AnimateProgressAsync()
+    {
+        var complete = new TaskCompletionSource();
+        new Animation(width => progressFill.WidthRequest = width, 0, 240)
+            .Commit(progressFill, "SplashProgress", length: 2200, easing: Easing.CubicOut,
+                finished: (_, _) => complete.TrySetResult());
+        return complete.Task;
+    }
 
     private async Task PulseAsync()
     {

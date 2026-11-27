@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="SaffronWok.Mobile.HomePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:SaffronWok.Mobile"
+    Title="Home">
+
+    <Grid Background="{StaticResource HomeBackgroundBrush}">
+        <ScrollView HorizontalScrollBarVisibility="Never" VerticalScrollBarVisibility="Never">
+            <VerticalStackLayout Padding="16" Spacing="24">
+                <Label x:Name="status" IsVisible="False" TextColor="{StaticResource TextMuted}" />
+                <Button x:Name="retry" IsVisible="False" Text="Retry loading events" Clicked="RetryClicked" />
+
+                <!-- Top Welcome Strip -->
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                    <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                        <Label
+                            Text="LIVE CHARCOAL KITCHEN"
+                            Style="{StaticResource SectionHeaderLabel}"
+                            TextColor="{StaticResource AccentAmberBright}" />
+                        <Label
+                            Text="Fire-Grilled Flavor Awaits"
+                            Style="{StaticResource PageTitleLabel}" />
+                    </VerticalStackLayout>
+
+                    <Border
+                        Grid.Column="1"
+                        BackgroundColor="{StaticResource AccentEmeraldTint}"
+                        Stroke="{StaticResource BorderEmeraldBrush}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 999"
+                        Padding="10,6"
+                        VerticalOptions="Center">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="LocatorTapped" />
+                        </Border.GestureRecognizers>
+                        <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                            <BoxView WidthRequest="6" HeightRequest="6" CornerRadius="3" Color="#34D399" VerticalOptions="Center" />
+                            <Label x:Name="liveLocations" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource AccentEmeraldSoft}" />
+                        </HorizontalStackLayout>
+                    </Border>
+                </Grid>
+
+                <!-- OBJECT 1: Today's Fire & Daily Specials Carousel -->
+                <VerticalStackLayout x:Name="specialsSection" IsVisible="False" Spacing="10">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="🔥 TODAY'S FIRE &amp; DAILY SPECIALS" Style="{StaticResource SectionHeaderLabel}" VerticalOptions="Center" />
+                        <HorizontalStackLayout Grid.Column="1" Spacing="6">
+                            <Button
+                                Text="‹"
+                                Clicked="PreviousClicked"
+                                WidthRequest="30"
+                                HeightRequest="30"
+                                Padding="0"
+                                CornerRadius="8"
+                                BackgroundColor="{StaticResource BgSurfaceElevated}"
+                                TextColor="{StaticResource TextPrimary}"
+                                FontSize="16" />
+                            <Button
+                                Text="›"
+                                Clicked="NextClicked"
+                                WidthRequest="30"
+                                HeightRequest="30"
+                                Padding="0"
+                                CornerRadius="8"
+                                BackgroundColor="{StaticResource BgSurfaceElevated}"
+                                TextColor="{StaticResource TextPrimary}"
+                                FontSize="16" />
+                        </HorizontalStackLayout>
+                    </Grid>
+
+                    <Border
+                        Stroke="{StaticResource BorderAmberBrush}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 24"
+                        Padding="0"
+                        BackgroundColor="{StaticResource BgSurface}">
+                        <CarouselView
+                            x:Name="SpecialsCarousel"
+                            IndicatorView="SpecialsIndicator"
+                            HorizontalScrollBarVisibility="Never"
+                            VerticalScrollBarVisibility="Never"
+                            Loop="True"
+                            HeightRequest="248"
+                            PeekAreaInsets="0">
+                            <CarouselView.ItemTemplate>
+                                <DataTemplate x:DataType="models:DailySpecialModel">
+                                    <Grid Padding="20">
+                                        <Grid.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                <GradientStop Color="{Binding GradientStart}" Offset="0.0" />
+                                                <GradientStop Color="{Binding GradientMid}" Offset="0.5" />
+                                                <GradientStop Color="#18181B" Offset="1.0" />
+                                            </LinearGradientBrush>
+                                        </Grid.Background>
+
+                                        <Grid RowDefinitions="Auto,*,Auto">
+                                            <!-- Badges -->
+                                            <FlexLayout Wrap="Wrap" JustifyContent="Start" AlignItems="Center">
+                                                <Border
+                                                    BackgroundColor="#9909090B"
+                                                    Stroke="#4DFBBF24"
+                                                    StrokeShape="RoundRectangle 999"
+                                                    Padding="10,4"
+                                                    Margin="0,0,6,4">
+                                                    <Label Text="{Binding Badge, StringFormat='✨ {0}'}" FontSize="10" FontAttributes="Bold" TextColor="{StaticResource AccentAmberSoft}" />
+                                                </Border>
+                                                <Border
+                                                    BackgroundColor="#59000000"
+                                                    Stroke="#26FFFFFF"
+                                                    StrokeShape="RoundRectangle 999"
+                                                    Padding="10,4"
+                                                    Margin="0,0,0,4">
+                                                    <Label Text="{Binding LocationLabel, StringFormat='📍 {0}'}" FontSize="10" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" />
+                                                </Border>
+                                            </FlexLayout>
+
+                                            <!-- Title & Tagline -->
+                                            <VerticalStackLayout Grid.Row="1" Spacing="6" VerticalOptions="Center" Margin="0,8,0,0">
+                                                <Label Text="{Binding Title}" FontSize="22" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" MaxLines="2" />
+                                                <Label Text="{Binding Tagline}" FontSize="12" TextColor="#E6FFFFFF" MaxLines="2" LineBreakMode="TailTruncation" />
+                                            </VerticalStackLayout>
+
+                                            <!-- Price & CTA -->
+                                            <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="0,12,0,0">
+                                                <VerticalStackLayout VerticalOptions="Center">
+                                                    <Label Text="STARTING AT" FontSize="10" FontAttributes="Bold" TextColor="#BFFFFFFF" />
+                                                    <Label Text="{Binding Price, StringFormat='${0:F2}'}" FontSize="20" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" />
+                                                </VerticalStackLayout>
+                                                <Button
+                                                    Grid.Column="1"
+                                                    Text="View menu  ›"
+                                                    Clicked="SpecialClicked"
+                                                    CommandParameter="{Binding .}"
+                                                    BackgroundColor="{StaticResource TextPrimary}"
+                                                    TextColor="{StaticResource TextOnAccent}"
+                                                    FontAttributes="Bold"
+                                                    FontSize="12"
+                                                    CornerRadius="12"
+                                                    HeightRequest="40"
+                                                    Padding="16,0"
+                                                    VerticalOptions="End" />
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </DataTemplate>
+                            </CarouselView.ItemTemplate>
+                        </CarouselView>
+                    </Border>
+
+                    <IndicatorView
+                        x:Name="SpecialsIndicator"
+                        HorizontalOptions="Center"
+                        IndicatorColor="#52525B"
+                        SelectedIndicatorColor="{StaticResource AccentAmberBright}"
+                        IndicatorSize="7" />
+                </VerticalStackLayout>
+
+                <!-- OBJECT 2: Horizontal Scrollable Upcoming Events -->
+                <VerticalStackLayout Spacing="10">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="📅 UPCOMING EVENTS" Style="{StaticResource SectionHeaderLabel}" VerticalOptions="Center" />
+                        <Label
+                            Grid.Column="1"
+                            Text="See Map ›"
+                            FontSize="11"
+                            FontAttributes="Bold"
+                            TextColor="{StaticResource AccentAmberBright}"
+                            VerticalOptions="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="LocatorTapped" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Grid>
+
+                    <CollectionView x:Name="upcomingEvents" HorizontalScrollBarVisibility="Never" VerticalScrollBarVisibility="Never" HeightRequest="184">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Horizontal" ItemSpacing="12" SnapPointsType="MandatorySingle" SnapPointsAlignment="Start" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:UpcomingEventModel">
+                                <Border
+                                    WidthRequest="256"
+                                    BackgroundColor="{StaticResource BgSurface}"
+                                    Stroke="{StaticResource BorderStrongBrush}"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 16"
+                                    Padding="14">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Tapped="LocatorTapped"
+                                            CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Grid RowDefinitions="Auto,*,Auto" RowSpacing="10">
+                                        <Grid ColumnDefinitions="Auto,*">
+                                            <Border BackgroundColor="{StaticResource AccentAmber}" StrokeThickness="0" StrokeShape="RoundRectangle 999" Padding="8,3">
+                                                <Label Text="{Binding DateBadge}" FontSize="10" FontAttributes="Bold" TextColor="{StaticResource TextOnAccent}" />
+                                            </Border>
+
+                                            <HorizontalStackLayout Grid.Column="1" HorizontalOptions="End" Spacing="6" VerticalOptions="Center">
+                                                <Border
+                                                    BackgroundColor="{Binding TruckFill}"
+                                                    Stroke="{Binding TruckStroke}"
+                                                    StrokeShape="RoundRectangle 999"
+                                                    Padding="8,2">
+                                                    <Label
+                                                        Text="{Binding TruckShortName}"
+                                                        FontSize="10"
+                                                        FontAttributes="Bold"
+                                                        TextColor="{Binding TruckText}" />
+                                                </Border>
+                                                <BoxView IsVisible="{Binding IsLive}" WidthRequest="7" HeightRequest="7" CornerRadius="4" Color="#34D399" VerticalOptions="Center" />
+                                            </HorizontalStackLayout>
+                                        </Grid>
+
+                                        <VerticalStackLayout Grid.Row="1" Spacing="4" VerticalOptions="Center">
+                                            <Label Text="{Binding Name}" FontSize="14" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" LineBreakMode="TailTruncation" />
+                                            <Label Text="{Binding Location, StringFormat='📍 {0}'}" FontSize="11" TextColor="{StaticResource TextMuted}" LineBreakMode="TailTruncation" />
+                                            <Label Text="{Binding Hours, StringFormat='🕒 {0}'}" FontSize="11" TextColor="{StaticResource TextMuted}" />
+                                        </VerticalStackLayout>
+
+                                        <Border Grid.Row="2" StrokeThickness="0" Padding="0,8,0,0" BackgroundColor="Transparent">
+                                            <VerticalStackLayout Spacing="8">
+                                                <BoxView HeightRequest="1" Color="{StaticResource BorderSubtle}" />
+                                                <Label Text="Open in Truck Locator  ›" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource AccentAmberBright}" />
+                                            </VerticalStackLayout>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

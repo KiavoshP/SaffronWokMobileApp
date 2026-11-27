@@ -36,7 +36,9 @@ public sealed partial class DiscoveryApp : Application
     private static Uri ApiAddress()
     {
 #if ANDROID
-        return new("http://10.0.2.2:5000/");
+        return new(Microsoft.Maui.Devices.DeviceInfo.Current.DeviceType == Microsoft.Maui.Devices.DeviceType.Physical
+            ? "http://127.0.0.1:5000/"
+            : "http://10.0.2.2:5000/");
 #else
         return new("http://localhost:5000/");
 #endif
