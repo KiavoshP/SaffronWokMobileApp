@@ -22,6 +22,7 @@
                     <Button Grid.Column="1" Text="Refresh events" Clicked="RefreshClicked" />
                 </Grid>
                 <Label x:Name="status" TextColor="{StaticResource TextMuted}" IsVisible="False" />
+                <VerticalStackLayout x:Name="nearbySuggestions" IsVisible="False" Spacing="6" />
                 <HorizontalStackLayout x:Name="truckFilters" IsVisible="False" Spacing="6" />
                 <Border x:Name="mapCard" IsVisible="False" Stroke="{StaticResource BorderStrongBrush}"
                         BackgroundColor="{StaticResource BgSurface}" StrokeShape="RoundRectangle 24"

@@ -14,6 +14,9 @@ public sealed partial class AccountPage : ContentPage
     private string? receipt;
     private bool registering;
     private bool busy;
+    private bool visible;
+    private CancellationTokenSource? orderPolling;
+    private IReadOnlyList<DemoOrder> displayedActiveOrders = [];
 
     internal AccountPage(HttpClient api)
     {
@@ -24,8 +27,9 @@ public sealed partial class AccountPage : ContentPage
             credentials.IsVisible = false;
             demoAccount.IsVisible = true;
             orderPlaceholder.IsVisible = false;
-            foreach (var order in DemoData.Orders)
-                (order.IsActive ? activeOrders : pastOrders).Children.Add(CreateOrderCard(order));
+            sessionStatus.Text = "Sample session · 1-hour sliding session active";
+            foreach (var order in DemoData.Orders.Where(order => !order.IsActive))
+                pastOrders.Children.Add(CreateOrderCard(order));
         }
 
         accountStatus.PropertyChanged += (_, args) =>
@@ -38,8 +42,12 @@ public sealed partial class AccountPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        visible = true;
         if (DemoData.Enabled)
+        {
+            StartOrderPolling();
             return;
+        }
 
         await WhileBusyAsync(async () =>
         {
@@ -58,6 +66,52 @@ public sealed partial class AccountPage : ContentPage
             ShowProfile(await response.Content.ReadFromJsonAsync<CustomerProfile>() ??
                 throw new HttpRequestException("Missing customer profile."));
         });
+    }
+
+    protected override void OnDisappearing()
+    {
+        visible = false;
+        StopOrderPolling();
+        base.OnDisappearing();
+    }
+
+    private void StartOrderPolling()
+    {
+        if (!DemoData.Enabled || !visible || !demoOrders.IsVisible || orderPolling is not null)
+            return;
+
+        orderPolling = new CancellationTokenSource();
+        _ = PollActiveOrdersAsync(orderPolling.Token);
+    }
+
+    private void StopOrderPolling()
+    {
+        orderPolling?.Cancel();
+        orderPolling?.Dispose();
+        orderPolling = null;
+    }
+
+    private async Task PollActiveOrdersAsync(CancellationToken cancellation)
+    {
+        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(10));
+        try
+        {
+            do
+            {
+                cancellation.ThrowIfCancellationRequested();
+                var orders = DemoData.Orders.Where(order => order.IsActive).ToArray();
+                if (!orders.SequenceEqual(displayedActiveOrders))
+                {
+                    activeOrders.Children.Clear();
+                    foreach (var order in orders)
+                        activeOrders.Children.Add(CreateOrderCard(order));
+                    displayedActiveOrders = orders;
+                }
+            } while (await timer.WaitForNextTickAsync(cancellation));
+        }
+        catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
+        {
+        }
     }
 
     private void SwitchModeClicked(object? sender, EventArgs args)
@@ -136,6 +190,7 @@ public sealed partial class AccountPage : ContentPage
         ShowProfile(DemoData.Customer);
         previewProfile.IsVisible = false;
         demoOrders.IsVisible = true;
+        StartOrderPolling();
     }
 
     private View CreateOrderCard(DemoOrder order)
@@ -168,6 +223,7 @@ public sealed partial class AccountPage : ContentPage
     {
         if (DemoData.Enabled)
         {
+            StopOrderPolling();
             profilePanel.IsVisible = demoOrders.IsVisible = false;
             previewProfile.IsVisible = true;
             heading.Text = "Customer Sign In";

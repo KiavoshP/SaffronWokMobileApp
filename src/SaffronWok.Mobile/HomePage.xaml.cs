@@ -5,12 +5,12 @@ namespace SaffronWok.Mobile;
 public sealed partial class HomePage : ContentPage
 {
     private readonly DiscoveryCatalog catalog;
-    private readonly Func<ServiceEvent, Task> openMenu;
+    private readonly Func<ServiceEvent, string, Task> openMenu;
     private readonly Action<ServiceEvent?> openLocator;
     private CancellationTokenSource? rotation;
     private bool loading;
 
-    internal HomePage(DiscoveryCatalog catalog, Func<ServiceEvent, Task> openMenu, Action<ServiceEvent?> openLocator)
+    internal HomePage(DiscoveryCatalog catalog, Func<ServiceEvent, string, Task> openMenu, Action<ServiceEvent?> openLocator)
     {
         this.catalog = catalog;
         this.openMenu = openMenu;
@@ -100,7 +100,7 @@ public sealed partial class HomePage : ContentPage
     private async void SpecialClicked(object? sender, EventArgs e)
     {
         if (sender is Button { CommandParameter: DailySpecialModel special })
-            await openMenu(special.Event);
+            await openMenu(special.Event, special.Title);
     }
 }
 

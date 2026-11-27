@@ -39,6 +39,11 @@
                     </VerticalStackLayout>
                     <VerticalStackLayout x:Name="profilePanel" IsVisible="False" Spacing="12">
                         <Label x:Name="profilePhone" TextColor="{StaticResource TextMuted}" />
+                        <Border Padding="10,6" StrokeShape="RoundRectangle 12"
+                                Stroke="{StaticResource BorderEmeraldBrush}" BackgroundColor="{StaticResource AccentEmeraldTint}">
+                            <Label x:Name="sessionStatus" Text="1-hour sliding session active"
+                                   FontSize="12" TextColor="{StaticResource AccentEmeraldSoft}" />
+                        </Border>
                         <Label x:Name="orderPlaceholder" Text="Order history is coming soon." TextColor="{StaticResource TextMuted}" />
                         <Button Text="Sign out" Clicked="SignOutClicked" />
                     </VerticalStackLayout>

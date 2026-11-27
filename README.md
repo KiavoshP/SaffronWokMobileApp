@@ -69,3 +69,5 @@ dotnet build .\src\SaffronWok.Mobile -c Debug -f net10.0-android -r android-arm6
 ```
 
 The header displays **DEMO**. Home, Menu, and Locator use sample events and dishes. Open **User → Open sample profile** for example active orders and history. Rewards shows a sample balance and perks. Cart shows a read-only example total. This mode needs no API, database, USB forwarding, or SMS. Release builds use the API, and Debug builds use the API unless the demo flag is set.
+
+Featured specials open their event's menu, scroll to the matching dish, and briefly highlight its card. Nearby event suggestions leave the current menu selection in place. The demo profile refreshes its active order list on a 10-second timer while User is visible. Live order polling depends on the customer-scoped SaffPOS integration.

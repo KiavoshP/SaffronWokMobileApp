@@ -33,12 +33,17 @@
                                      HorizontalItemSpacing="12" VerticalItemSpacing="12" />
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
-                    <DataTemplate xmlns:shared="clr-namespace:SaffronWok.Shared;assembly=SaffronWok.Shared" x:DataType="shared:MenuDish">
+                    <DataTemplate xmlns:local="clr-namespace:SaffronWok.Mobile" x:DataType="local:MenuDishCard">
                         <Border Padding="0" BackgroundColor="{StaticResource BgSurface}"
                                 Stroke="{StaticResource BorderSubtleBrush}" StrokeShape="RoundRectangle 16">
                             <Border.Triggers>
-                                <DataTrigger TargetType="Border" Binding="{Binding SoldOut}" Value="True">
+                                <DataTrigger TargetType="Border" Binding="{Binding Dish.SoldOut}" Value="True">
                                     <Setter Property="Opacity" Value="0.6" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Border" Binding="{Binding Highlight}" Value="True">
+                                    <Setter Property="Stroke" Value="{StaticResource AccentAmberBrightBrush}" />
+                                    <Setter Property="StrokeThickness" Value="3" />
+                                    <Setter Property="Opacity" Value="1" />
                                 </DataTrigger>
                             </Border.Triggers>
                             <Grid RowDefinitions="46,Auto,Auto">
@@ -49,15 +54,15 @@
                                             <GradientStop Color="{StaticResource BgSurfaceElevated}" Offset="1" />
                                         </LinearGradientBrush>
                                     </Grid.Background>
-                                    <Border IsVisible="{Binding SoldOut}" HorizontalOptions="Start" VerticalOptions="Center"
+                                    <Border IsVisible="{Binding Dish.SoldOut}" HorizontalOptions="Start" VerticalOptions="Center"
                                             BackgroundColor="{StaticResource AccentDangerBg}" Stroke="{StaticResource BorderDangerBrush}"
                                             StrokeShape="RoundRectangle 999" Padding="6,3">
                                         <Label Text="SOLD OUT TODAY" FontSize="9" FontFamily="InterBold"
                                                TextColor="{StaticResource AccentDangerSoft}" />
                                     </Border>
                                 </Grid>
-                                <Label Grid.Row="1" Margin="10,8" Text="{Binding Name}" FontSize="14" FontFamily="InterBold" />
-                                <Label Grid.Row="2" Margin="10,0,10,10" Text="{Binding Price, StringFormat='${0:F2}'}"
+                                <Label Grid.Row="1" Margin="10,8" Text="{Binding Dish.Name}" FontSize="14" FontFamily="InterBold" />
+                                <Label Grid.Row="2" Margin="10,0,10,10" Text="{Binding Dish.Price, StringFormat='${0:F2}'}"
                                        FontSize="14" FontFamily="InterBold" TextColor="{StaticResource AccentAmberBright}" />
                             </Grid>
                         </Border>

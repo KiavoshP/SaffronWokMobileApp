@@ -26,7 +26,7 @@ public sealed partial class AppShell : Shell
         FlyoutBehavior = FlyoutBehavior.Disabled;
 
         menu = new MenuPage(catalog);
-        locator = new EventPage(catalog, OpenMenuAsync);
+        locator = new EventPage(catalog, item => OpenMenuAsync(item));
         homeTab = AddTab("Home", "home", new HomePage(catalog, OpenMenuAsync, ShowLocator));
         menuTab = AddTab("Menu", "menu", menu);
         AddTab("User", "user", new AccountPage(catalog.Api));
@@ -112,10 +112,10 @@ public sealed partial class AppShell : Shell
         return tab;
     }
 
-    private async Task OpenMenuAsync(ServiceEvent serviceEvent)
+    private async Task OpenMenuAsync(ServiceEvent serviceEvent, string? featuredDish = null)
     {
         navigation.CurrentItem = menuTab;
-        await menu.SelectAsync(serviceEvent);
+        await menu.SelectAsync(serviceEvent, featuredDish);
     }
 
     private void ShowLocator(ServiceEvent? serviceEvent)

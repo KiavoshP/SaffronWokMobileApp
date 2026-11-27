@@ -41,20 +41,9 @@ public sealed partial class EventPage : ContentPage
             deviceLocation = null;
         }
 
-        var nearby = deviceLocation is { } location
-            ? EventSuggestions.Find(catalog.Events, location.Latitude, location.Longitude).FirstOrDefault()
-            : null;
-        if (nearby is not null)
-        {
-            truckFilter = null;
-            selectedId = nearby.Event.Id;
-        }
-
         RenderEvents();
         if (deviceLocation is null)
             Status("Location is unavailable. You can still browse all events.");
-        else if (nearby is null && catalog.Events.Count > 0)
-            Status("No events within 5 miles. You can still browse all events.");
     }
 
     private async Task LoadAsync(bool refresh = false)
@@ -86,7 +75,34 @@ public sealed partial class EventPage : ContentPage
         var liveCount = events.Where(item => item.IsServing).Select(item => item.Truck).Distinct().Count();
         serviceCount.Text = liveCount == 1 ? "1 location live" : $"{liveCount} locations live";
         Status(events.Count == 0 ? "No events are currently listed." : null);
+        RenderNearbySuggestions(events);
         RenderLocator(events);
+    }
+
+    private void RenderNearbySuggestions(IReadOnlyList<ServiceEvent> events)
+    {
+        nearbySuggestions.Children.Clear();
+        nearbySuggestions.IsVisible = false;
+        if (deviceLocation is not { } location || events.Count == 0)
+            return;
+
+        var suggestions = EventSuggestions.Find(events, location.Latitude, location.Longitude).ToArray();
+        if (suggestions.Length == 0)
+        {
+            Status("No events within 5 miles. You can still browse all events.");
+            return;
+        }
+
+        nearbySuggestions.IsVisible = true;
+        nearbySuggestions.Children.Add(new Label { Text = "Nearby stops · within 5 miles", FontFamily = "InterBold" });
+        foreach (var suggestion in suggestions)
+        {
+            var item = suggestion.Event;
+            var service = item.IsServing ? "Serving now" : "Upcoming";
+            var button = new Button { Text = $"{item.Name} · {service} · {suggestion.Miles:0.0} mi" };
+            button.Clicked += (_, _) => FocusEvent(item);
+            nearbySuggestions.Children.Add(button);
+        }
     }
 
     private void RenderLocator(IReadOnlyList<ServiceEvent> allEvents)

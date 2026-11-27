@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using SaffronWok.Shared;
 
 namespace SaffronWok.Mobile;
@@ -7,18 +8,23 @@ public sealed partial class MenuPage : ContentPage
     private readonly DiscoveryCatalog catalog;
     private ServiceEvent? selected;
     private int requestId;
-    private IReadOnlyList<MenuDish> dishes = [];
+    private IReadOnlyList<MenuDishCard> dishes = [];
     private string? category;
+    private MenuDishCard? pendingHighlight;
+    private bool visible;
 
     internal MenuPage(DiscoveryCatalog catalog)
     {
         this.catalog = catalog;
         InitializeComponent();
+        items.SizeChanged += (_, _) => ShowFeaturedDish();
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        visible = true;
+        ShowFeaturedDish();
         if (selected is not null)
             return;
 
@@ -35,10 +41,17 @@ public sealed partial class MenuPage : ContentPage
         }
     }
 
-    internal async Task SelectAsync(ServiceEvent serviceEvent)
+    protected override void OnDisappearing()
+    {
+        visible = false;
+        base.OnDisappearing();
+    }
+
+    internal async Task SelectAsync(ServiceEvent serviceEvent, string? featuredDish = null)
     {
         var request = ++requestId;
-        if (selected?.Id != serviceEvent.Id)
+        pendingHighlight = null;
+        if (selected?.Id != serviceEvent.Id || featuredDish is not null)
             category = null;
         selected = serviceEvent;
         locationSwitcher.ShowLocation(serviceEvent);
@@ -53,8 +66,15 @@ public sealed partial class MenuPage : ContentPage
             if (request != requestId)
                 return;
 
-            dishes = menu?.Dishes ?? [];
+            dishes = menu?.Dishes.Select(dish => new MenuDishCard(dish)).ToArray() ?? [];
             RenderCategories();
+            if (featuredDish is not null)
+            {
+                pendingHighlight = dishes.FirstOrDefault(card =>
+                    string.Equals(card.Dish.Name, featuredDish, StringComparison.OrdinalIgnoreCase));
+                ShowFeaturedDish();
+            }
+
             venueNote.Text = menu?.VenueNote;
             venue.IsVisible = !string.IsNullOrWhiteSpace(venueNote.Text);
             summary.Text = $"{menu?.Dishes.Count ?? 0} items at {serviceEvent.Name}";
@@ -66,14 +86,32 @@ public sealed partial class MenuPage : ContentPage
         }
     }
 
+    private void ShowFeaturedDish()
+    {
+        if (pendingHighlight is null || !visible || items.Handler is null || items.Width <= 0 || items.Height <= 0)
+            return;
+
+        Dispatcher.Dispatch(async () =>
+        {
+            if (pendingHighlight is not { } card || !visible || items.Handler is null)
+                return;
+
+            pendingHighlight = null;
+            card.Highlight = true;
+            items.ScrollTo(card, position: ScrollToPosition.Center, animate: true);
+            await Task.Delay(TimeSpan.FromSeconds(2));
+            card.Highlight = false;
+        });
+    }
+
     private void RenderCategories()
     {
         categoryFilters.Children.Clear();
-        var categories = dishes.Select(dish => dish.Category).OfType<string>().Distinct().Order().ToArray();
+        var categories = dishes.Select(dish => dish.Dish.Category).OfType<string>().Distinct().Order().ToArray();
         if (category is not null && !categories.Contains(category))
             category = null;
 
-        items.ItemsSource = category is null ? dishes : dishes.Where(dish => dish.Category == category).ToArray();
+        items.ItemsSource = category is null ? dishes : dishes.Where(dish => dish.Dish.Category == category).ToArray();
         if (categories.Length == 0)
             return;
 
@@ -83,7 +121,12 @@ public sealed partial class MenuPage : ContentPage
             if (value == category)
                 chip.Style = (Style)Application.Current!.Resources["PrimaryButton"];
 
-            chip.Clicked += (_, _) => { category = value; RenderCategories(); };
+            chip.Clicked += (_, _) =>
+            {
+                pendingHighlight = null;
+                category = value;
+                RenderCategories();
+            };
             categoryFilters.Children.Add(chip);
         }
     }
@@ -121,6 +164,27 @@ public sealed partial class MenuPage : ContentPage
         finally
         {
             refresh.IsRefreshing = false;
+        }
+    }
+}
+
+
+internal sealed class MenuDishCard(MenuDish dish) : INotifyPropertyChanged
+{
+    private bool highlight;
+    public MenuDish Dish { get; } = dish;
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    public bool Highlight
+    {
+        get => highlight;
+        set
+        {
+            if (highlight == value)
+                return;
+
+            highlight = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Highlight)));
         }
     }
 }
