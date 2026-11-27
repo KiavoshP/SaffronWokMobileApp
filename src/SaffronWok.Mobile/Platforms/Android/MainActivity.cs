@@ -2,7 +2,6 @@ using Android.App;
 using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
-using AndroidX.Core.Graphics;
 using AndroidX.Core.View;
 using NativeView = Android.Views.View;
 
@@ -46,7 +45,7 @@ public sealed class MainActivity : MauiAppCompatActivity
                 return insets;
 
             view.SetPadding(padding.Left, padding.Top, padding.Right, padding.Bottom);
-            return new WindowInsetsCompat.Builder(insets).SetInsets(edges, Insets.None)?.Build() ?? insets;
+            return new WindowInsetsCompat.Builder(insets).SetInsets(edges, AndroidX.Core.Graphics.Insets.None)?.Build() ?? insets;
         }
     }
 }
