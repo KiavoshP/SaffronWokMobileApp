@@ -46,15 +46,19 @@
                                     <Setter Property="Opacity" Value="1" />
                                 </DataTrigger>
                             </Border.Triggers>
-                            <Grid RowDefinitions="46,Auto,Auto">
-                                <Grid Padding="8">
+                            <Grid RowDefinitions="124,Auto,Auto">
+                                <Grid IsClippedToBounds="True">
                                     <Grid.Background>
                                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                             <GradientStop Color="{StaticResource AccentAmberTint}" Offset="0" />
                                             <GradientStop Color="{StaticResource BgSurfaceElevated}" Offset="1" />
                                         </LinearGradientBrush>
                                     </Grid.Background>
-                                    <Border IsVisible="{Binding Dish.SoldOut}" HorizontalOptions="Start" VerticalOptions="Center"
+                                    <controls:SaffronLogoView Size="28" Opacity="0.45" InputTransparent="True"
+                                                              HorizontalOptions="Center" VerticalOptions="Center" />
+                                    <Image Source="{Binding Photo}" Aspect="AspectFill" InputTransparent="True" />
+                                    <Border IsVisible="{Binding Dish.SoldOut}" Margin="8"
+                                            HorizontalOptions="Start" VerticalOptions="Start"
                                             BackgroundColor="{StaticResource AccentDangerBg}" Stroke="{StaticResource BorderDangerBrush}"
                                             StrokeShape="RoundRectangle 999" Padding="6,3">
                                         <Label Text="SOLD OUT TODAY" FontSize="9" FontFamily="InterBold"

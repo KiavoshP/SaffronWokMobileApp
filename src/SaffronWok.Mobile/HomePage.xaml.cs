@@ -46,6 +46,7 @@ public sealed partial class HomePage : ContentPage
         {
             var events = await catalog.GetEventsAsync(refresh);
             var locations = events.Where(item => item.IsServing).Select(item => item.Truck).Distinct().Count();
+            locationsBadge.IsVisible = eventsSection.IsVisible = events.Count > 0;
             liveLocations.Text = locations == 1 ? "1 location live" : $"{locations} locations live";
             SpecialsCarousel.ItemsSource = catalog.Specials.Select(item =>
                 (Special: item, Event: events.FirstOrDefault(serviceEvent => serviceEvent.Id == item.EventId)))
@@ -107,6 +108,7 @@ public sealed partial class HomePage : ContentPage
 internal sealed record DailySpecialModel(DailySpecial Special, ServiceEvent Event)
 {
     public string Title => Special.Title;
+    public ImageSource? Photo { get; } = DishPhoto.FromUrl(Special.PhotoUrl);
     public string Badge => Special.Badge;
     public string Tagline => Special.Tagline;
     public decimal Price => Special.Price;

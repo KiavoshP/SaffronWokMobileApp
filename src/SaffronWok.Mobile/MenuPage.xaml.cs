@@ -173,6 +173,7 @@ internal sealed class MenuDishCard(MenuDish dish) : INotifyPropertyChanged
 {
     private bool highlight;
     public MenuDish Dish { get; } = dish;
+    public ImageSource? Photo { get; } = DishPhoto.FromUrl(dish.PhotoUrl);
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public bool Highlight

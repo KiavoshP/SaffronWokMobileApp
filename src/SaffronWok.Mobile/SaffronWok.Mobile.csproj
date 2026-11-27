@@ -14,7 +14,7 @@
     <SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net10.0-android'">24.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net10.0-ios'">15.0</SupportedOSPlatformVersion>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug' and '$(SaffronWokDemo)' == 'true'">
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug' and '$(SaffronWokDemo)' != 'false'">
     <DefineConstants>$(DefineConstants);SAFFRON_DEMO</DefineConstants>
   </PropertyGroup>
   <ItemGroup>

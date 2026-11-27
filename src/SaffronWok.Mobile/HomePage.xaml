@@ -3,6 +3,7 @@
     x:Class="SaffronWok.Mobile.HomePage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:SaffronWok.Mobile.Controls"
     xmlns:models="clr-namespace:SaffronWok.Mobile"
     Title="Home">
 
@@ -24,7 +25,7 @@
                             Style="{StaticResource PageTitleLabel}" />
                     </VerticalStackLayout>
 
-                    <Border
+                    <Border x:Name="locationsBadge" IsVisible="False"
                         Grid.Column="1"
                         BackgroundColor="{StaticResource AccentEmeraldTint}"
                         Stroke="{StaticResource BorderEmeraldBrush}"
@@ -82,11 +83,11 @@
                             HorizontalScrollBarVisibility="Never"
                             VerticalScrollBarVisibility="Never"
                             Loop="True"
-                            HeightRequest="248"
+                            HeightRequest="328"
                             PeekAreaInsets="0">
                             <CarouselView.ItemTemplate>
                                 <DataTemplate x:DataType="models:DailySpecialModel">
-                                    <Grid Padding="20">
+                                    <Grid RowDefinitions="152,*" RowSpacing="0">
                                         <Grid.Background>
                                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                                 <GradientStop Color="{Binding GradientStart}" Offset="0.0" />
@@ -95,9 +96,12 @@
                                             </LinearGradientBrush>
                                         </Grid.Background>
 
-                                        <Grid RowDefinitions="Auto,*,Auto">
-                                            <!-- Badges -->
-                                            <FlexLayout Wrap="Wrap" JustifyContent="Start" AlignItems="Center">
+                                        <Grid IsClippedToBounds="True">
+                                            <controls:SaffronLogoView Size="38" Opacity="0.55" InputTransparent="True"
+                                                                      HorizontalOptions="Center" VerticalOptions="Center" />
+                                            <Image Source="{Binding Photo}" Aspect="AspectFill" InputTransparent="True" />
+                                            <FlexLayout Margin="12" Wrap="Wrap" JustifyContent="Start" AlignItems="Start"
+                                                        VerticalOptions="Start">
                                                 <Border
                                                     BackgroundColor="#9909090B"
                                                     Stroke="#4DFBBF24"
@@ -115,15 +119,16 @@
                                                     <Label Text="{Binding LocationLabel, StringFormat='📍 {0}'}" FontSize="10" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" />
                                                 </Border>
                                             </FlexLayout>
+                                        </Grid>
 
-                                            <!-- Title & Tagline -->
-                                            <VerticalStackLayout Grid.Row="1" Spacing="6" VerticalOptions="Center" Margin="0,8,0,0">
+                                        <Grid Grid.Row="1" Padding="16,10,16,14" RowDefinitions="*,Auto">
+                                            <VerticalStackLayout Spacing="5" VerticalOptions="Center">
                                                 <Label Text="{Binding Title}" FontSize="22" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" MaxLines="2" />
                                                 <Label Text="{Binding Tagline}" FontSize="12" TextColor="#E6FFFFFF" MaxLines="2" LineBreakMode="TailTruncation" />
                                             </VerticalStackLayout>
 
                                             <!-- Price & CTA -->
-                                            <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="0,12,0,0">
+                                            <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="0,8,0,0">
                                                 <VerticalStackLayout VerticalOptions="Center">
                                                     <Label Text="STARTING AT" FontSize="10" FontAttributes="Bold" TextColor="#BFFFFFFF" />
                                                     <Label Text="{Binding Price, StringFormat='${0:F2}'}" FontSize="20" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" />
@@ -157,8 +162,8 @@
                         IndicatorSize="7" />
                 </VerticalStackLayout>
 
-                <!-- OBJECT 2: Horizontal Scrollable Upcoming Events -->
-                <VerticalStackLayout Spacing="10">
+                <!-- Horizontal list of upcoming events -->
+                <VerticalStackLayout x:Name="eventsSection" IsVisible="False" Spacing="10">
                     <Grid ColumnDefinitions="*,Auto">
                         <Label Text="📅 UPCOMING EVENTS" Style="{StaticResource SectionHeaderLabel}" VerticalOptions="Center" />
                         <Label

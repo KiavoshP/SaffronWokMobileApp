@@ -62,12 +62,14 @@ Poll in batches sized to the worker's available sending capacity. Acknowledge on
 
 ## Offline UI preview on Experiment
 
-Build the app in Debug with `-p:SaffronWokDemo=true`. For an attached Android phone, run this from PowerShell at the repository root:
+Debug builds on `Experiment` open the offline demo by default, including when launched from Visual Studio. For an attached Android phone, run this from PowerShell at the repository root:
 
 ```powershell
-dotnet build .\src\SaffronWok.Mobile -c Debug -f net10.0-android -r android-arm64 -p:SaffronWokMobileTargetFramework=net10.0-android -p:SaffronWokDemo=true -t:Run
+dotnet build .\src\SaffronWok.Mobile -c Debug -f net10.0-android -r android-arm64 -p:SaffronWokMobileTargetFramework=net10.0-android -t:Run
 ```
 
-The header displays **DEMO**. Home, Menu, and Locator use sample events and dishes. Open **User → Open sample profile** for example active orders and history. Rewards shows a sample balance and perks. Cart shows a read-only example total. This mode needs no API, database, USB forwarding, or SMS. Release builds use the API, and Debug builds use the API unless the demo flag is set.
+The header displays **DEMO**. Home, Menu, and Locator use sample events and dishes. Open **User → Open sample profile** for example active orders and history. Rewards shows a sample balance and perks. Cart shows a read-only example total. This mode needs no API, database, USB forwarding, or SMS. Release builds use the API, and pass `-p:SaffronWokDemo=false` to connect a Debug build to the API.
 
 Featured specials open their event's menu, scroll to the matching dish, and briefly highlight its card. Nearby event suggestions leave the current menu selection in place. The demo profile refreshes its active order list on a 10-second timer while User is visible. Live order polling depends on the customer-scoped SaffPOS integration.
+
+Menu dishes and featured specials accept an optional `photoUrl` in their API responses. Use an absolute HTTPS URL for the dish image. Both layouts reserve photo space and display a SaffronWok emblem when the response has no image.
