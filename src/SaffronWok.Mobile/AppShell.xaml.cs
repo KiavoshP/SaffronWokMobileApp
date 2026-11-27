@@ -23,7 +23,7 @@ public sealed partial class AppShell : Shell
         navigation = useRail
             ? new FlyoutItem { FlyoutDisplayOptions = FlyoutDisplayOptions.AsMultipleItems }
             : new TabBar();
-        FlyoutBehavior = useRail ? FlyoutBehavior.Locked : FlyoutBehavior.Disabled;
+        FlyoutBehavior = FlyoutBehavior.Disabled;
 
         menu = new MenuPage(catalog);
         locator = new EventPage(catalog, OpenMenuAsync);
@@ -32,7 +32,24 @@ public sealed partial class AppShell : Shell
         AddTab("User", "user", new AccountPage(catalog.Api));
         AddTab("Rewards", "rewards", new RewardsPage());
         locatorTab = AddTab("Locator", "locator", locator);
+        var splash = new SplashPage(catalog, ShowMainNavigation);
+        SetNavBarIsVisible(splash, false);
+        SetTabBarIsVisible(splash, false);
+        var startup = new TabBar { Route = "startup" };
+        SetFlyoutItemIsVisible(startup, false);
+        var startupTab = new Tab { Route = "startup-tab" };
+        startupTab.Items.Add(new ShellContent { Route = "splash", Content = splash });
+        startup.Items.Add(startupTab);
+
+        Items.Add(startup);
         Items.Add(navigation);
+        CurrentItem = startup;
+    }
+
+    private void ShowMainNavigation()
+    {
+        CurrentItem = navigation;
+        FlyoutBehavior = useRail ? FlyoutBehavior.Locked : FlyoutBehavior.Disabled;
     }
 
     private Tab AddTab(string title, string route, ContentPage page)

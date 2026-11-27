@@ -3,26 +3,44 @@ namespace SaffronWok.Mobile;
 public sealed partial class SplashPage : ContentPage
 {
     private readonly DiscoveryCatalog catalog;
-    private bool started;
+    private readonly Action completed;
+    private bool running;
+    private bool finished;
 
-    internal SplashPage(DiscoveryCatalog catalog)
+    internal SplashPage(DiscoveryCatalog catalog, Action completed)
     {
         this.catalog = catalog;
+        this.completed = completed;
         InitializeComponent();
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        if (started)
+        if (running || finished)
             return;
 
-        started = true;
-        await Task.WhenAll(PreloadAsync(), AnimateAsync());
-        await root.FadeToAsync(0, 420, Easing.CubicOut);
-        if (Window is { } window && ReferenceEquals(window.Page, this))
-            window.Page = new AppShell(catalog);
+        running = true;
+        try
+        {
+            await Task.WhenAll(PreloadAsync(), AnimateAsync());
+            if (!IsAttached)
+                return;
+
+            await root.FadeToAsync(0, 420, Easing.CubicOut);
+            if (IsAttached)
+            {
+                finished = true;
+                completed();
+            }
+        }
+        finally
+        {
+            running = false;
+        }
     }
+
+    private bool IsAttached => Handler is not null && Window?.Handler is not null;
 
     private async Task PreloadAsync()
     {
@@ -55,7 +73,10 @@ public sealed partial class SplashPage : ContentPage
     {
         await Task.WhenAll(glow.ScaleToAsync(1.12, 900, Easing.SinInOut),
             emblem.TranslateToAsync(0, -8, 600, Easing.SinInOut));
-        await Task.WhenAll(glow.ScaleToAsync(0.95, 900, Easing.SinInOut),
-            emblem.TranslateToAsync(0, 0, 600, Easing.SinInOut));
+        if (IsAttached)
+        {
+            await Task.WhenAll(glow.ScaleToAsync(0.95, 900, Easing.SinInOut),
+                emblem.TranslateToAsync(0, 0, 600, Easing.SinInOut));
+        }
     }
 }

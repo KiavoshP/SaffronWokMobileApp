@@ -31,7 +31,7 @@ public sealed partial class DiscoveryApp : Application
         InitializeComponent();
     }
 
-    protected override Window CreateWindow(IActivationState? activationState) => new(new SplashPage(catalog));
+    protected override Window CreateWindow(IActivationState? activationState) => new(new AppShell(catalog));
 
     private static Uri ApiAddress()
     {
