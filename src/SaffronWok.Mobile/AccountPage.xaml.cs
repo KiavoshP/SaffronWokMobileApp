@@ -19,6 +19,15 @@ public sealed partial class AccountPage : ContentPage
     {
         this.api = api;
         InitializeComponent();
+        if (DemoData.Enabled)
+        {
+            credentials.IsVisible = false;
+            demoAccount.IsVisible = true;
+            orderPlaceholder.IsVisible = false;
+            foreach (var order in DemoData.Orders)
+                (order.IsActive ? activeOrders : pastOrders).Children.Add(CreateOrderCard(order));
+        }
+
         accountStatus.PropertyChanged += (_, args) =>
         {
             if (args.PropertyName == Label.TextProperty.PropertyName)
@@ -29,6 +38,9 @@ public sealed partial class AccountPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        if (DemoData.Enabled)
+            return;
+
         await WhileBusyAsync(async () =>
         {
             token ??= await SecureStorage.Default.GetAsync(SessionKey);
@@ -119,14 +131,60 @@ public sealed partial class AccountPage : ContentPage
         await SecureStorage.Default.SetAsync(SessionKey, token);
     });
 
-    private async void SignOutClicked(object? sender, EventArgs args) => await WhileBusyAsync(async () =>
+    private void PreviewClicked(object? sender, EventArgs args)
+    {
+        ShowProfile(DemoData.Customer);
+        previewProfile.IsVisible = false;
+        demoOrders.IsVisible = true;
+    }
+
+    private View CreateOrderCard(DemoOrder order)
+    {
+        var details = new Button { Text = "View details", FontSize = 12 };
+        details.Clicked += async (_, _) => await DisplayAlertAsync($"Sample order {order.Number}",
+            string.Join("\n", order.Lines.Select(line => $"{line.QuantityLabel} · ${line.Total:F2}")) +
+            $"\n\n{order.Status} · ${order.Total:F2}", "Close");
+
+        return new Border
+        {
+            Style = (Style)Application.Current!.Resources["SurfaceCard"],
+            Content = new VerticalStackLayout
+            {
+                Spacing = 5,
+                Children =
+                {
+                    new Label { Text = $"{order.Number} · {order.Status}", FontFamily = "InterBold",
+                        TextColor = AppShell.ThemeColor(order.IsActive ? "AccentAmberBright" : "TextPrimary") },
+                    new Label { Text = order.Location, FontSize = 12 },
+                    new Label { Text = $"{order.Placed} · ${order.Total:F2}", FontSize = 12,
+                        TextColor = AppShell.ThemeColor("TextMuted") },
+                    details
+                }
+            }
+        };
+    }
+
+    private async void SignOutClicked(object? sender, EventArgs args)
+    {
+        if (DemoData.Enabled)
+        {
+            profilePanel.IsVisible = demoOrders.IsVisible = false;
+            previewProfile.IsVisible = true;
+            heading.Text = "Customer Sign In";
+            return;
+        }
+
+        await WhileBusyAsync(SignOutAsync);
+    }
+
+    private async Task SignOutAsync()
     {
         using var response = await SendAuthenticatedAsync(HttpMethod.Post, "api/customer/logout");
         if (response.StatusCode != HttpStatusCode.Unauthorized)
             response.EnsureSuccessStatusCode();
 
         ClearSession();
-    });
+    }
 
     private async Task<HttpResponseMessage> SendAuthenticatedAsync(HttpMethod method, string url)
     {

@@ -97,6 +97,10 @@ public sealed partial class AppShell : Shell
             }
         };
         Grid.SetColumn(cart, 1);
+        if (DemoData.Enabled)
+            bar.Children.Add(new Label { Text = "DEMO", FontSize = 10, TextColor = ThemeColor("AccentAmberBright"),
+                VerticalOptions = LayoutOptions.Center });
+
         header.Children.Add(bar);
         header.Children.Add(cart);
         Shell.SetTitleView(page, header);

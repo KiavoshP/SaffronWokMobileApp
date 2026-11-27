@@ -39,8 +39,19 @@
                     </VerticalStackLayout>
                     <VerticalStackLayout x:Name="profilePanel" IsVisible="False" Spacing="12">
                         <Label x:Name="profilePhone" TextColor="{StaticResource TextMuted}" />
-                        <Label Text="Order history is coming soon." TextColor="{StaticResource TextMuted}" />
+                        <Label x:Name="orderPlaceholder" Text="Order history is coming soon." TextColor="{StaticResource TextMuted}" />
                         <Button Text="Sign out" Clicked="SignOutClicked" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout x:Name="demoAccount" IsVisible="False" Spacing="10">
+                        <Label Text="Fictional customer and orders" Style="{StaticResource MutedCaptionLabel}" />
+                        <Button x:Name="previewProfile" Text="Open sample profile" Clicked="PreviewClicked"
+                                Style="{StaticResource PrimaryButton}" />
+                        <VerticalStackLayout x:Name="demoOrders" IsVisible="False" Spacing="8">
+                            <Label Text="ACTIVE ORDERS" Style="{StaticResource SectionHeaderLabel}" />
+                            <VerticalStackLayout x:Name="activeOrders" Spacing="8" />
+                            <Label Text="ORDER HISTORY" Style="{StaticResource SectionHeaderLabel}" />
+                            <VerticalStackLayout x:Name="pastOrders" Spacing="8" />
+                        </VerticalStackLayout>
                     </VerticalStackLayout>
                     <Border x:Name="accountError" IsVisible="False" BackgroundColor="#26EF4444"
                             Stroke="{StaticResource BorderDangerBrush}" StrokeShape="RoundRectangle 12" Padding="10">

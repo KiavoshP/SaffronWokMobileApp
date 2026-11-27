@@ -14,6 +14,9 @@
     <SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net10.0-android'">24.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net10.0-ios'">15.0</SupportedOSPlatformVersion>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug' and '$(SaffronWokDemo)' == 'true'">
+    <DefineConstants>$(DefineConstants);SAFFRON_DEMO</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <MauiImage Include="Resources/Images/nav_*.svg" BaseSize="24,24" />
     <MauiFont Include="Resources/Fonts/Inter-*.ttf" />

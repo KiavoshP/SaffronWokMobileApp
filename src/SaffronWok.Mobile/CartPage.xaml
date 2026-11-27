@@ -2,11 +2,12 @@
 <ContentPage x:Class="SaffronWok.Mobile.CartPage"
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:SaffronWok.Mobile"
              Title="My Cart">
     <ScrollView HorizontalScrollBarVisibility="Never" VerticalScrollBarVisibility="Never">
         <VerticalStackLayout Padding="16">
                 <!-- Empty State -->
-                <VerticalStackLayout
+                <VerticalStackLayout x:Name="emptyCart"
                     Padding="24,48"
                     Spacing="10"
                     HorizontalOptions="Center">
@@ -33,6 +34,28 @@
                         HorizontalOptions="Center" />
                 </VerticalStackLayout>
 
+            <VerticalStackLayout x:Name="sampleCart" IsVisible="False" Spacing="12">
+                <Label Text="Sample pickup cart" Style="{StaticResource PageTitleLabel}" />
+                <VerticalStackLayout x:Name="sampleLines" Spacing="8">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="local:DemoLine">
+                            <Border Style="{StaticResource SurfaceCard}">
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                    <VerticalStackLayout Spacing="4">
+                                        <Label Text="{Binding QuantityLabel}" FontFamily="InterBold" />
+                                        <Label Text="{Binding Note}" Style="{StaticResource MutedCaptionLabel}" />
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="1" Text="{Binding Total, StringFormat='${0:F2}'}"
+                                           TextColor="{StaticResource AccentAmberBright}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+                <Label x:Name="sampleTotal" FontSize="18" FontFamily="InterExtraBold" />
+                <Label Text="Preview only. Mobile ordering is coming soon." Style="{StaticResource MutedCaptionLabel}" />
+                <Button Text="Browse Live Menu" Style="{StaticResource PrimaryButton}" Clicked="BrowseClicked" />
+            </VerticalStackLayout>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

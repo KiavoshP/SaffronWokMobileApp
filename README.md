@@ -59,3 +59,13 @@ The SIM worker makes outbound **HTTPS** requests to the API. Send `Authorization
 The single-message `POST /api/sms-queue/claim` and `POST /api/sms-queue/{id}/ack` endpoints also remain available.
 
 Poll in batches sized to the worker's available sending capacity. Acknowledge only the messages the SIM service accepted, and send acknowledgements before each lease expires. A lease lasts up to 30 seconds. Unacknowledged messages can be claimed again after their leases expire, until the verification code expires. Keep track of sent message IDs locally so a lost acknowledgement does not send the same SMS again. Only acknowledge a retry with its current lease ID. The API encrypts queued text at rest and skips superseded, consumed, or expired challenges. The Development test code does not queue an SMS.
+
+## Offline UI preview on Experiment
+
+Build the app in Debug with `-p:SaffronWokDemo=true`. For an attached Android phone, run this from PowerShell at the repository root:
+
+```powershell
+dotnet build .\src\SaffronWok.Mobile -c Debug -f net10.0-android -r android-arm64 -p:SaffronWokMobileTargetFramework=net10.0-android -p:SaffronWokDemo=true -t:Run
+```
+
+The header displays **DEMO**. Home, Menu, and Locator use sample events and dishes. Open **User → Open sample profile** for example active orders and history. Rewards shows a sample balance and perks. Cart shows a read-only example total. This mode needs no API, database, USB forwarding, or SMS. Release builds use the API, and Debug builds use the API unless the demo flag is set.

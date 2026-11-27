@@ -21,7 +21,10 @@ internal sealed class DiscoveryCatalog(HttpClient api)
 
     public async Task LoadAsync(CancellationToken cancellationToken)
     {
-        var data = await Api.GetFromJsonAsync<DiscoveryBootstrap>("api/bootstrap", cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
+        var data = DemoData.Enabled
+            ? DemoData.Bootstrap
+            : await Api.GetFromJsonAsync<DiscoveryBootstrap>("api/bootstrap", cancellationToken);
         if (data is null)
             return;
 
@@ -37,6 +40,9 @@ internal sealed class DiscoveryCatalog(HttpClient api)
             preloadedMenu = null;
             return menu;
         }
+
+        if (DemoData.Enabled)
+            return DemoData.Menus.GetValueOrDefault(eventId);
 
         return await Api.GetFromJsonAsync<EventMenu>($"api/events/{Uri.EscapeDataString(eventId)}/menu");
     }
