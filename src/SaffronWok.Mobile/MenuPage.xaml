@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:SaffronWok.Mobile"
              xmlns:controls="clr-namespace:SaffronWok.Mobile.Controls"
              x:Class="SaffronWok.Mobile.MenuPage"
              Title="Menu">
@@ -33,7 +34,7 @@
                                      HorizontalItemSpacing="12" VerticalItemSpacing="12" />
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
-                    <DataTemplate xmlns:local="clr-namespace:SaffronWok.Mobile" x:DataType="local:MenuDishCard">
+                    <DataTemplate x:DataType="local:MenuDishCard">
                         <Border Padding="0" BackgroundColor="{StaticResource BgSurface}"
                                 Stroke="{StaticResource BorderSubtleBrush}" StrokeShape="RoundRectangle 16">
                             <Border.Triggers>
